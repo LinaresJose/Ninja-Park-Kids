@@ -1,0 +1,23 @@
+{
+  "name": "Ninja Park Kids",
+  "short_name": "NinjaPark",
+  "description": "Sistema de Registro y Gestión para Ninja Park Kids",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2d3748",
+  "theme_color": "#E6007E",
+  "icons": [
+    {
+      "src": "/img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
