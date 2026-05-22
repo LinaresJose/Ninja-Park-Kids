@@ -1,59 +1,131 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🥷 Ninja Park Kids - Sistema de Registro y Gestión
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/img/logo.png" alt="Ninja Park Kids Logo" width="250">
 </p>
 
-## About Laravel
+El **Sistema de Registro y Gestión para Ninja Park Kids** es una plataforma web moderna y robusta construida con **Laravel**, diseñada para digitalizar, optimizar y automatizar los procesos operativos de parques de entretenimiento infantil.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Permite a los representantes registrar a los participantes, firmar digitalmente deslindes de responsabilidad (Waivers), generar pases con códigos QR únicos y gestionar de manera integral la operativa del parque (tarifas, horarios, promociones, reportes y más).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🚀 Características Principales
 
-## Learning Laravel
+### 📋 Módulo de Registro y Legal (Waiver Digital)
+*   **Firma Digital Integrada:** Firma de acuerdos de responsabilidad en tiempo real utilizando `Signature Pad`.
+*   **Generación de PDF:** Creación automática y descarga del deslinde firmado con validez jurídica.
+*   **Validación de Datos:** Registro completo de Representantes (padres/tutores) y múltiples Participantes (niños).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🎫 Gestión de Acceso y Pases
+*   **Pases con Códigos QR:** Emisión de pases únicos con códigos QR dinámicos para los participantes.
+*   **Escaner QR para Staff:** Interfaz integrada para operadores usando la cámara del dispositivo móvil o PC (`HTML5-QRCode`) para validar accesos en segundos.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### ⚙️ Panel de Administración y Configuración
+*   **Dashboard Estadístico:** Gráficas interactivas del flujo de visitantes e ingresos utilizando `Chart.js`.
+*   **Gestión Operativa:** Configuración dinámica de tarifas, horarios especiales del parque y promociones de temporada.
+*   **Control de Roles:** Seguridad avanzada mediante middleware (`CheckRole`) con niveles de acceso: Administrador, Operador/Staff y Representante.
 
-## Laravel Sponsors
+### 🤖 Canales Automatizados
+*   **Integración de Chatbot:** Controlador API para la comunicación automatizada de consultas frecuentes e integraciones.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🛠️ Stack Tecnológico
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+El proyecto está diseñado bajo una arquitectura limpia y de alto rendimiento utilizando:
 
-## Contributing
+*   **Backend:** PHP 8.2+ & [Laravel 11](https://laravel.com/)
+*   **Frontend Interactivo:** [Alpine.js](https://alpinejs.dev/) & [Bootstrap 5](https://getbootstrap.com/)
+*   **Estilos y Componentes:** CSS Moderno e Interfaz Responsiva
+*   **Generación de Documentos:** `DomPDF` para deslindes en PDF
+*   **Librerías Clave:**
+    *   `SignaturePad.js` (Captura de firmas)
+    *   `HTML5-QRCode` (Lectura y escaneo de códigos QR)
+    *   `Chart.js` (Reportes visuales)
+    *   `SweetAlert2` & `Flatpickr` (Experiencia de usuario premium)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 📂 Estructura del Proyecto (Puntos Clave)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── Admin/          # Controladores de administración (Usuarios, Config, Reportes)
+│   │   ├── Staff/          # Panel de operadores de taquilla/acceso
+│   │   └── Api/            # APIs de integración y Chatbot
+│   └── Models/             # Modelos de base de datos (AcuerdoFirmado, Participante, Representante, etc.)
+├── database/
+│   ├── migrations/         # Esquema de base de datos relacional
+│   └── seeders/            # Datos iniciales (Roles, Términos y Condiciones, Administrador)
+├── resources/
+│   ├── views/
+│   │   ├── admin/          # Vistas Blade del panel administrativo
+│   │   ├── registro/       # Flujo de registro de participantes, firma y pase
+│   │   └── pdf/            # Plantilla del documento legal del acuerdo
+│   └── css/ & js/          # Archivos de recursos y dependencias frontend
+└── public/                 # Archivos estáticos, fuentes tipográficas personalizadas y scripts compilados
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📦 Instalación y Configuración Local
 
-## License
+Sigue estos pasos para levantar el entorno de desarrollo en tu máquina local:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/LinaresJose/Ninja-Park-Kids.git
+cd Ninja-Park-Kids
+```
+
+### 2. Instalar dependencias de PHP y Node.js
+```bash
+composer install
+npm install
+```
+
+### 3. Configurar las variables de entorno
+Copia el archivo de ejemplo a un archivo `.env` real:
+```bash
+cp .env.example .env
+```
+Abre `.env` y configura tus credenciales de base de datos (por ejemplo, en Laragon):
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ninja_park_kids
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 4. Generar la clave de aplicación y enlazar almacenamiento
+```bash
+php artisan key:generate
+php artisan storage:link
+```
+
+### 5. Correr las migraciones y sembrar datos de prueba
+Esto creará las tablas y sembrará los roles, términos y el usuario administrador por defecto.
+```bash
+php artisan migrate --seed
+```
+
+### 6. Iniciar los servidores de desarrollo
+Para levantar el servidor de Laravel:
+```bash
+php artisan serve
+```
+Y para la compilación de recursos frontend con Vite:
+```bash
+npm run dev
+```
+
+---
+
+## 🔒 Seguridad y Licencia
+El proyecto cuenta con estrictos controles de sesión y políticas de deslinde de responsabilidad digital de acuerdo con los términos legales vigentes del parque. 
+
+Distribuido bajo la Licencia **MIT**. Consulta el archivo `LICENSE` para más información.
