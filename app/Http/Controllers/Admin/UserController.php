@@ -57,4 +57,44 @@ class UserController extends Controller
         $mensaje = $nuevoEstado ? 'Usuario activado exitosamente.' : 'Usuario desactivado exitosamente.';
         return redirect()->route('admin.users')->with('success', $mensaje);
     }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'nombre'   => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'cedula'   => 'required|string|unique:usuarios,cedula,' . $id,
+            'correo'   => 'required|email|max:255|unique:usuarios,correo,' . $id,
+            'rol_id'   => 'required|exists:roles,id',
+            'password' => 'nullable|string|min:4',
+        ], [
+            'cedula.unique' => 'Esa cédula ya está registrada por otro usuario.',
+            'correo.unique' => 'Ese correo ya está en uso por otro usuario.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('admin.users')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
+        $data = [
+            'nombre'   => $request->nombre,
+            'apellido' => $request->apellido,
+            'cedula'   => $request->cedula,
+            'correo'   => $request->correo,
+            'rol_id'   => $request->rol_id,
+        ];
+
+        // Solo actualizar contraseña si se envió una nueva
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('admin.users')->with('success', 'Usuario actualizado exitosamente.');
+    }
 }

@@ -41,7 +41,7 @@
             <thead>
                 <tr>
                     <th>NOMBRE COMPLETO</th>
-                    <th>CORREO / TELÉFONO</th>
+                    <th>CORREO</th>
                     <th>ROL DE ACCESO</th>
                     <th class="text-center">ESTADO</th>
                     <th class="text-end">ACCIONES</th>
@@ -70,6 +70,10 @@
                         @endif
                     </td>
                     <td class="text-end">
+                        <button class="btn btn-sm btn-light border me-1" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}" title="Editar Usuario">
+                            <i class="bi bi-pencil-square text-primary"></i>
+                        </button>
+
                         <form action="{{ route('staff.users.destroy', $user->id) }}" method="POST" class="d-inline form-delete">
                             @csrf
                             @method('DELETE')
@@ -81,6 +85,60 @@
                         </form>
                     </td>
                 </tr>
+
+                <!-- Modal Editar Usuario #{{ $user->id }} -->
+                <div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                            <div class="modal-header border-bottom p-4">
+                                <h5 class="modal-title font-title"><i class="bi bi-person-gear text-primary me-2"></i> Editar Usuario</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('staff.users.update', $user->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-body p-4">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted small fw-bold font-title">NOMBRE</label>
+                                            <input type="text" name="nombre" class="form-control form-control-lg bg-light border-0" value="{{ $user->nombre }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted small fw-bold font-title">APELLIDO</label>
+                                            <input type="text" name="apellido" class="form-control form-control-lg bg-light border-0" value="{{ $user->apellido }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted small fw-bold font-title">CÉDULA</label>
+                                            <input type="text" name="cedula" class="form-control form-control-lg bg-light border-0" value="{{ $user->cedula }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted small fw-bold font-title">ROL ASIGNADO</label>
+                                            <select name="rol_id" class="form-select form-select-lg bg-light border-0" required>
+                                                @foreach($roles as $rol)
+                                                    <option value="{{ $rol->id }}" {{ $user->rol_id == $rol->id ? 'selected' : '' }}>{{ strtoupper($rol->nombre_rol) }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label text-muted small fw-bold font-title">CORREO CORPORATIVO</label>
+                                            <input type="email" name="correo" class="form-control form-control-lg bg-light border-0" value="{{ $user->correo }}" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label text-muted small fw-bold font-title">NUEVA CONTRASEÑA <span class="text-muted fw-normal">(dejar en blanco para no cambiar)</span></label>
+                                            <input type="password" name="password" class="form-control form-control-lg bg-light border-0" placeholder="••••••••">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-top p-4">
+                                    <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn text-white rounded-3 px-4 shadow-sm" style="background: var(--primary);">Guardar Cambios</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fin Modal #{{ $user->id }} -->
+
                 @endforeach
             </tbody>
         </table>

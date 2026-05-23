@@ -50,6 +50,12 @@
                 </div>
             </form>
 
+            <div class="text-center mb-3">
+                <a href="{{ route('password.request') }}" class="text-primary text-decoration-none small fw-bold">
+                    <i class="bi bi-question-circle me-1"></i> ¿Olvidaste tu contraseña?
+                </a>
+            </div>
+
             <div class="text-center">
                 <a href="{{ route('registro.verificar') }}" class="text-muted text-decoration-none small">
                     <i class="bi bi-chevron-left me-1"></i> Volver al Registro de Clientes

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\Auth\LoginController;
@@ -52,6 +52,12 @@ Route::prefix('staff-ninja')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+    // --- RECUPERACIÓN DE CONTRASEÑA (Públicas dentro del prefijo) ---
+    Route::get('/recuperar-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/recuperar-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/restablecer-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/restablecer-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+
     // Rutas Protegidas por AUTH y ROLES (Nivel Operador Integral)
     Route::middleware(['auth', 'role:operador'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -77,6 +83,7 @@ Route::prefix('staff-ninja')->group(function () {
     Route::middleware(['auth', 'role:gerente'])->group(function () {
         Route::get('/usuarios', [DashboardController::class, 'users'])->name('admin.users');
         Route::post('/usuarios', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('staff.users.store');
+        Route::put('/usuarios/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('staff.users.update');
         Route::delete('/usuarios/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('staff.users.destroy');
 
         // --- CONFIGURACIÃ“N DEL PARQUE ---
@@ -90,6 +97,7 @@ Route::prefix('staff-ninja')->group(function () {
         Route::get('/tarifas', [App\Http\Controllers\Admin\ConfigController::class, 'tarifas'])->name('admin.config.tarifas');
         Route::post('/tarifas', [App\Http\Controllers\Admin\ConfigController::class, 'storeTarifa'])->name('admin.config.tarifas.store');
         Route::put('/tarifas/{id}', [App\Http\Controllers\Admin\ConfigController::class, 'updateTarifa'])->name('admin.config.tarifas.update');
+        Route::delete('/tarifas/{id}', [App\Http\Controllers\Admin\ConfigController::class, 'destroyTarifa'])->name('admin.config.tarifas.destroy');
         Route::post('/tarifas/{id}/toggle', [App\Http\Controllers\Admin\ConfigController::class, 'toggleTarifa'])->name('admin.config.tarifas.toggle');
         Route::put('/horarios', [App\Http\Controllers\Admin\ConfigController::class, 'updateHorarios'])->name('admin.config.horarios.update');
 
@@ -97,6 +105,7 @@ Route::prefix('staff-ninja')->group(function () {
         Route::get('/promociones', [App\Http\Controllers\Admin\ConfigController::class, 'promociones'])->name('admin.config.promociones');
         Route::post('/promociones', [App\Http\Controllers\Admin\ConfigController::class, 'storePromocion'])->name('admin.config.promociones.store');
         Route::put('/promociones/{id}', [App\Http\Controllers\Admin\ConfigController::class, 'updatePromocion'])->name('admin.config.promociones.update');
+        Route::delete('/promociones/{id}', [App\Http\Controllers\Admin\ConfigController::class, 'destroyPromocion'])->name('admin.config.promociones.destroy');
         Route::post('/promociones/{id}/toggle', [App\Http\Controllers\Admin\ConfigController::class, 'togglePromocion'])->name('admin.config.promociones.toggle');
     });
 });

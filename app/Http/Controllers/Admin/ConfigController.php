@@ -48,12 +48,26 @@ class ConfigController extends Controller
     public function updateTarifa(Request $request, $id)
     {
         $tarifa = Tarifa::findOrFail($id);
+        
+        $request->validate([
+            'nombre_tarifa' => 'required|string',
+            'duracion_minutos' => 'nullable|integer',
+            'precio' => 'required|numeric',
+        ]);
+
         $tarifa->update([
             'nombre_tarifa' => $request->nombre_tarifa,
             'duracion_minutos' => $request->duracion_minutos,
             'precio' => $request->precio,
         ]);
         return redirect()->route('admin.config.tarifas')->with('success', 'Tarifa actualizada correctamente.');
+    }
+
+    public function destroyTarifa($id)
+    {
+        $tarifa = Tarifa::findOrFail($id);
+        $tarifa->delete();
+        return redirect()->route('admin.config.tarifas')->with('success', 'Tarifa eliminada correctamente.');
     }
 
     public function toggleTarifa($id)
@@ -130,6 +144,13 @@ class ConfigController extends Controller
         ]);
 
         return redirect()->route('admin.config.promociones')->with('success', 'Promoción actualizada correctamente.');
+    }
+
+    public function destroyPromocion($id)
+    {
+        $promocion = Promocion::findOrFail($id);
+        $promocion->delete();
+        return redirect()->route('admin.config.promociones')->with('success', 'Promoción eliminada correctamente.');
     }
 
     public function togglePromocion($id)

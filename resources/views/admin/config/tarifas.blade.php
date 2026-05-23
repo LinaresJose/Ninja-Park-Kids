@@ -46,12 +46,60 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <form action="{{ route('admin.config.tarifas.toggle', $tarifa->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm {{ $tarifa->esta_activa ? 'btn-outline-danger' : 'btn-outline-success' }}">
-                                            {{ $tarifa->esta_activa ? 'Desactivar' : 'Activar' }}
+                                    <div class="d-flex align-items-center gap-1">
+                                        <form action="{{ route('admin.config.tarifas.toggle', $tarifa->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm {{ $tarifa->esta_activa ? 'btn-outline-warning' : 'btn-outline-success' }}" title="{{ $tarifa->esta_activa ? 'Desactivar' : 'Activar' }}">
+                                                <i class="bi {{ $tarifa->esta_activa ? 'bi-toggle-on' : 'bi-toggle-off' }}"></i>
+                                            </button>
+                                        </form>
+
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditarTarifa{{ $tarifa->id }}" title="Editar Tarifa">
+                                            <i class="bi bi-pencil-square"></i>
                                         </button>
-                                    </form>
+
+                                        <form action="{{ route('admin.config.tarifas.destroy', $tarifa->id) }}" method="POST" class="d-inline form-delete-tarifa">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar Tarifa">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Modal Editar Tarifa -->
+                                    <div class="modal fade" id="modalEditarTarifa{{ $tarifa->id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content border-0 shadow">
+                                                <div class="modal-header border-0">
+                                                    <h5 class="modal-title font-title">Editar Tarifa</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="{{ route('admin.config.tarifas.update', $tarifa->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-body text-start">
+                                                        <div class="mb-3">
+                                                            <label class="form-label text-muted small fw-bold">Nombre de la Tarifa</label>
+                                                            <input type="text" name="nombre_tarifa" class="form-control" value="{{ $tarifa->nombre_tarifa }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label text-muted small fw-bold">Duración (Minutos)</label>
+                                                            <input type="number" name="duracion_minutos" class="form-control" value="{{ $tarifa->duracion_minutos }}" placeholder="Dejar vacío para tiempo ilimitado">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label text-muted small fw-bold">Precio ($)</label>
+                                                            <input type="number" step="0.01" name="precio" class="form-control" value="{{ $tarifa->precio }}" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer border-0">
+                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-primary" style="background-color: var(--primary); border: none;">Guardar Cambios</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -138,3 +186,33 @@
   </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteForms = document.querySelectorAll('.form-delete-tarifa');
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: '¿Eliminar Tarifa?',
+                    text: 'Esta acción eliminará permanentemente la tarifa de la base de datos.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        title: 'font-title'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
+@endpush
