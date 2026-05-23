@@ -134,10 +134,10 @@ class DashboardController extends Controller
         $demoData = [$edades->g1, $edades->g2, $edades->g3, $edades->g4];
         $totalDemo = array_sum($demoData);
         
-        $demoLabels = ['0-3 años', '4-7 años', '8-12 años', '+13 años'];
+        $demoLabels = ['1-3 años', '4-7 años', '8-12 años', '+13 años'];
         if ($totalDemo > 0) {
             $demoLabels = [
-                '0-3 años (' . round(($edades->g1 / $totalDemo) * 100) . '%)',
+                '1-3 años (' . round(($edades->g1 / $totalDemo) * 100) . '%)',
                 '4-7 años (' . round(($edades->g2 / $totalDemo) * 100) . '%)',
                 '8-12 años (' . round(($edades->g3 / $totalDemo) * 100) . '%)',
                 '+13 años (' . round(($edades->g4 / $totalDemo) * 100) . '%)'

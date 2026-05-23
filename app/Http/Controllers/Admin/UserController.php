@@ -45,12 +45,16 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         
-        // Prevent self-deletion
+        // Prevent self-deactivation
         if (auth()->id() === $user->id) {
-            return redirect()->route('admin.users')->with('error', 'No puedes eliminar tu propia cuenta.');
+            return redirect()->route('admin.users')->with('error', 'No puedes desactivar o activar tu propia cuenta.');
         }
 
-        $user->delete();
-        return redirect()->route('admin.users')->with('success', 'Usuario eliminado exitosamente.');
+        // Alternar el estado
+        $nuevoEstado = !$user->estado;
+        $user->update(['estado' => $nuevoEstado]);
+
+        $mensaje = $nuevoEstado ? 'Usuario activado exitosamente.' : 'Usuario desactivado exitosamente.';
+        return redirect()->route('admin.users')->with('success', $mensaje);
     }
 }

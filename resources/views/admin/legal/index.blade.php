@@ -19,7 +19,7 @@
                     @csrf
                     <div class="mb-3">
                         <label class="form-label text-muted small fw-bold">Nombre de la Versión</label>
-                        <input type="text" name="version" class="form-control" placeholder="Ej: v2.0 - Enero 2026" required>
+                        <input type="text" name="version" class="form-control" value="{{ $defaultVersionName }}" placeholder="Ej: v2.0 - Enero 2026" required>
                     </div>
                     
                     <div class="mb-3">

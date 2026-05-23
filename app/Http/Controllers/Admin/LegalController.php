@@ -11,7 +11,22 @@ class LegalController extends Controller
     public function index()
     {
         $versiones = TerminoCondicion::orderBy('id', 'desc')->get();
-        return view('admin.legal.index', compact('versiones'));
+        
+        $ultimaVersion = TerminoCondicion::latest('id')->first();
+        $nextNum = 1.0;
+        if ($ultimaVersion) {
+            if (preg_match('/(\d+(?:\.\d+)?)/', $ultimaVersion->version, $matches)) {
+                $num = (float)$matches[1];
+                $nextNum = floor($num) + 1.0;
+            }
+        }
+        
+        \Carbon\Carbon::setLocale('es');
+        $mesAno = \Carbon\Carbon::now()->translatedFormat('F Y');
+        $mesAno = ucfirst($mesAno);
+        $defaultVersionName = sprintf("%.1f – %s", $nextNum, $mesAno);
+
+        return view('admin.legal.index', compact('versiones', 'defaultVersionName'));
     }
 
     public function store(Request $request)

@@ -24,7 +24,7 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt(['correo' => $credentials['correo'], 'password' => $credentials['password']], $request->remember)) {
+        if (Auth::attempt(['correo' => $credentials['correo'], 'password' => $credentials['password'], 'estado' => true], $request->remember)) {
             $request->session()->regenerate();
 
             return redirect()->intended(route('admin.dashboard'));

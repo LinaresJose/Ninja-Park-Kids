@@ -75,7 +75,11 @@
                         <form action="{{ route('staff.users.destroy', $user->id) }}" method="POST" class="d-inline form-delete">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-light border"><i class="bi bi-trash3 text-danger"></i></button>
+                            @if($user->estado)
+                                <button type="submit" class="btn btn-sm btn-light border" title="Desactivar Usuario" data-accion="desactivar"><i class="bi bi-person-x text-danger"></i></button>
+                            @else
+                                <button type="submit" class="btn btn-sm btn-light border" title="Activar Usuario" data-accion="activar"><i class="bi bi-person-check text-success"></i></button>
+                            @endif
                         </form>
                     </td>
                 </tr>
@@ -143,16 +147,28 @@
     document.addEventListener('DOMContentLoaded', function () {
         const deleteForms = document.querySelectorAll('.form-delete');
         deleteForms.forEach(form => {
+            const button = form.querySelector('button[type="submit"]');
+            const accion = button.getAttribute('data-accion');
+            
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
+                
+                const titulo = accion === 'desactivar' ? '¿Desactivar Usuario?' : '¿Activar Usuario?';
+                const texto = accion === 'desactivar' 
+                    ? 'El usuario ya no podrá iniciar sesión en el sistema.' 
+                    : 'El usuario recuperará el acceso completo al sistema.';
+                const botonConfirmar = accion === 'desactivar' ? 'Sí, desactivar' : 'Sí, activar';
+                const colorConfirmar = accion === 'desactivar' ? '#EF4444' : '#10B981';
+                const icono = accion === 'desactivar' ? 'warning' : 'question';
+
                 Swal.fire({
-                    title: '¿Eliminar Usuario?',
-                    text: 'Esta acción no se puede deshacer.',
-                    icon: 'warning',
+                    title: titulo,
+                    text: texto,
+                    icon: icono,
                     showCancelButton: true,
-                    confirmButtonColor: '#EF4444',
+                    confirmButtonColor: colorConfirmar,
                     cancelButtonColor: '#6B7280',
-                    confirmButtonText: 'Sí, eliminar',
+                    confirmButtonText: botonConfirmar,
                     cancelButtonText: 'Cancelar',
                     customClass: {
                         title: 'font-title'
