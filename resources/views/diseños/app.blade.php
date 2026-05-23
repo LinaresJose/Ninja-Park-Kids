@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -481,7 +481,11 @@
     </style>
 </head>
 
-<body class="{{ Request::is('staff-ninja/*') ? 'staff-layout' : '' }}">
+@php
+    $isStaffRoute = Request::is('staff-ninja/*') || Request::is('staff-ninja');
+    $isAuthRoute = Request::is('staff-ninja') || Request::is('staff-ninja/recuperar-password') || Request::is('staff-ninja/restablecer-password');
+@endphp
+<body class="{{ ($isStaffRoute && !$isAuthRoute) ? 'staff-layout' : '' }}">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
 

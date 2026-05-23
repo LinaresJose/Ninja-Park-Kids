@@ -198,7 +198,7 @@
 
     {{-- BURBUJA ──────────────────────────────────────────── --}}
     <button id="malochy-bubble" onclick="malochyToggle()" aria-label="Abrir chat con Malochy" title="Malochy — Asistente Ninja">
-        <img src="{{ asset('img/malochy.png') }}" alt="Malochy" style="width:95px;height:110px;object-fit:contain;display:block;position:relative;z-index:1;">
+        <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy" style="width:95px;height:110px;object-fit:contain;display:block;position:relative;z-index:1;">
         <span id="malochy-badge">1</span>
     </button>
 
@@ -208,7 +208,7 @@
         {{-- Header --}}
         <div class="mal-header">
             <div class="mal-avatar-wrap">
-                <img src="{{ asset('img/malochy.png') }}" alt="Malochy" style="width:46px;height:auto;object-fit:contain;display:block;">
+                <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy" style="width:46px;height:auto;object-fit:contain;display:block;">
             </div>
             <div class="mal-header-info">
                 <div class="mal-header-name">Malochy 🥷</div>
@@ -250,7 +250,7 @@
     const VERIFY_EP      = '{{ route("malochy.verificar") }}';
     const CSRF           = '{{ csrf_token() }}';
     const STAFF_NAME     = '{{ $staffName }}';
-    const AVATAR_URL     = '{{ asset("img/malochy.png") }}';
+    const AVATAR_URL     = '{{ asset("img/avatar-caricatura.png") }}';
 
     /* ── STATE ────────────────────────────────────────────── */
     let isOpen           = false;
@@ -352,7 +352,7 @@
         div.className = 'mal-msg bot';
         div.innerHTML = `
             <div class="mal-msg-icon">
-                <img src="{{ asset('img/malochy.png') }}" alt="Malochy">
+                <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy">
             </div>
             <div class="mal-bubble">${formatMd(text)}</div>`;
         msgs.appendChild(div);
