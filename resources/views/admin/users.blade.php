@@ -70,8 +70,6 @@
                         @endif
                     </td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-light border me-1"><i class="bi bi-pencil-square text-muted"></i></button>
-                        
                         <form action="{{ route('staff.users.destroy', $user->id) }}" method="POST" class="d-inline form-delete">
                             @csrf
                             @method('DELETE')
