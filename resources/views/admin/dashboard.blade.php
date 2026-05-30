@@ -4,7 +4,7 @@
 @section('title_header', 'Dashboard Principal')
 
 @section('content')
-<div class="row g-4 mb-5">
+<div class="row g-4 mb-3">
     <div class="col-md-6 col-xl-4">
         <div class="card-modern d-flex align-items-center">
             <div class="me-4 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: rgba(109, 40, 217, 0.1); color: var(--primary);">
