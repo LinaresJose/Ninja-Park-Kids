@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -24,7 +24,7 @@
 
     <!-- MENÚ LATERAL (SIDEBAR) -->
     <aside class="staff-sidebar" id="mainSidebar">
-        <div class="staff-sidebar-logo">
+        <div class="staff-sidebar-logo d-flex justify-content-center align-items-center">
             <img src="{{ asset('img/logo.png') }}" alt="Ninja Park Kids">
         </div>
 
