@@ -198,7 +198,7 @@
 
     {{-- BURBUJA ──────────────────────────────────────────── --}}
     <button id="malochy-bubble" onclick="malochyToggle()" aria-label="Abrir chat con Malochy" title="Malochy — Asistente Ninja">
-        <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy" style="width:60px;height:60px;object-fit:contain;display:block;position:relative;z-index:1;">
+        <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy" style="width:95px;height:110px;object-fit:contain;display:block;position:relative;z-index:1;">
         <span id="malochy-badge">1</span>
     </button>
 
