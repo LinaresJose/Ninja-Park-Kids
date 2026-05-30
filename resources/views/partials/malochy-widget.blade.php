@@ -30,7 +30,7 @@
     width: 72px; height: 72px;
     background: rgba(22, 163, 74, 0.18);
     border-radius: 50%; border: none; cursor: pointer;
-    display: flex; align-items: flex-end; justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
     position: relative;
     overflow: visible;
@@ -198,7 +198,7 @@
 
     {{-- BURBUJA ──────────────────────────────────────────── --}}
     <button id="malochy-bubble" onclick="malochyToggle()" aria-label="Abrir chat con Malochy" title="Malochy — Asistente Ninja">
-        <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy" style="width:95px;height:110px;object-fit:contain;display:block;position:relative;z-index:1;">
+        <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy" style="width:60px;height:60px;object-fit:contain;display:block;position:relative;z-index:1;">
         <span id="malochy-badge">1</span>
     </button>
 
