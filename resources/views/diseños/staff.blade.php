@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -16,20 +16,20 @@
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/flatpickr/css/flatpickr.min.css') }}">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
 
 <body>
 
-    <!-- MENÚ LATERAL (SIDEBAR) -->
+    <!-- MENÃš LATERAL (SIDEBAR) -->
     <aside class="staff-sidebar" id="mainSidebar">
         <div class="staff-sidebar-logo">
             <img src="{{ asset('img/logo.png') }}" alt="Ninja Park Kids">
         </div>
 
         <div class="px-3 mb-4 text-center">
-            <div class="small text-muted font-title text-uppercase">Sesión como</div>
+            <div class="small text-muted font-title text-uppercase">SesiÃ³n como</div>
             <div class="fw-bold" style="color: var(--primary);">{{ Auth::user()->nombre }}</div>
             <span class="badge"
                 style="background:#F1F5F9; color: var(--text-muted);">{{ Auth::user()->rol->nombre_rol }}</span>
@@ -46,10 +46,10 @@
                     <i class="bi bi-file-earmark-bar-graph-fill"></i> Reportes y Descargas
                 </a>
                 @if(Auth::user()->esGerente())
-                    <div class="px-2 mt-4 mb-2 text-muted small text-uppercase font-title fw-bold" style="font-size: 0.75rem;">Configuración del Parque</div>
+                    <div class="px-2 mt-4 mb-2 text-muted small text-uppercase font-title fw-bold" style="font-size: 0.75rem;">ConfiguraciÃ³n del Parque</div>
                     
                     <a href="{{ route('admin.legal.index') }}" class="nav-item-ninja {{ Request::is('staff-ninja/legal*') ? 'active' : '' }}">
-                        <i class="bi bi-file-earmark-text-fill"></i> Gestión Legal
+                        <i class="bi bi-file-earmark-text-fill"></i> GestiÃ³n Legal
                     </a>
                     <a href="{{ route('admin.config.tarifas') }}" class="nav-item-ninja {{ Request::is('staff-ninja/tarifas*') || Request::is('staff-ninja/horarios*') ? 'active' : '' }}">
                         <i class="bi bi-clock-fill"></i> Tarifas y Horarios
@@ -58,10 +58,10 @@
                         <i class="bi bi-tags-fill"></i> Promociones
                     </a>
 
-                    <div class="px-2 mt-4 mb-2 text-muted small text-uppercase font-title fw-bold" style="font-size: 0.75rem;">Administración</div>
+                    <div class="px-2 mt-4 mb-2 text-muted small text-uppercase font-title fw-bold" style="font-size: 0.75rem;">AdministraciÃ³n</div>
                     <a href="{{ route('admin.users') }}"
                         class="nav-item-ninja {{ Request::is('staff-ninja/usuarios') ? 'active' : '' }}">
-                        <i class="bi bi-people-fill"></i> Gestión Usuarios
+                        <i class="bi bi-people-fill"></i> GestiÃ³n Usuarios
                     </a>
                 @endif
             @endif
@@ -78,7 +78,7 @@
             <form action="{{ route('logout') }}" method="POST" id="logoutForm">
                 @csrf
                 <button type="button" class="btn-logout" onclick="confirmLogout()">
-                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar SesiÃ³n
                 </button>
             </form>
         </div>
@@ -114,7 +114,7 @@
         </div>
     </main>
 
-    <!-- Overlay para móvil -->
+    <!-- Overlay para mÃ³vil -->
     <div id="sidebarOverlay"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1035;">
     </div>
@@ -124,8 +124,10 @@
     <script defer src="{{ asset('vendor/alpinejs/alpine.min.js') }}"></script>
     <script src="{{ asset('vendor/chartjs/chart.umd.js') }}"></script>
 
+    
+
     <script>
-        // Toggle Sidebar Móvil
+        // Toggle Sidebar MÃ³vil
         const sidebar = document.getElementById('mainSidebar');
         const overlay = document.getElementById('sidebarOverlay');
 
@@ -137,16 +139,16 @@
         document.querySelector('.mobile-toggle').addEventListener('click', toggleMobileMenu);
         overlay.addEventListener('click', toggleMobileMenu);
 
-        // SweetAlert2 para Logout con advertencia del escáner
+        // SweetAlert2 para Logout con advertencia del escÃ¡ner
         function confirmLogout() {
             Swal.fire({
-                title: '¿Cerrar Sesión?',
-                text: '¿Estás seguro de que deseas cerrar sesión? Al salir, el escáner dejará de funcionar.',
+                title: 'Â¿Cerrar SesiÃ³n?',
+                text: 'Â¿EstÃ¡s seguro de que deseas cerrar sesiÃ³n? Al salir, el escÃ¡ner dejarÃ¡ de funcionar.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#EF4444',
                 cancelButtonColor: '#6B7280',
-                confirmButtonText: 'Sí, salir',
+                confirmButtonText: 'SÃ­, salir',
                 cancelButtonText: 'Cancelar',
                 customClass: {
                     title: 'font-title'

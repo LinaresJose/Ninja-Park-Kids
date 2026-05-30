@@ -16,14 +16,14 @@
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/flatpickr/css/flatpickr.min.css') }}">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 @php
     $isStaffRoute = Request::is('staff-ninja/*') || Request::is('staff-ninja');
     $isAuthRoute = Request::is('staff-ninja') || Request::is('staff-ninja/recuperar-password') || Request::is('staff-ninja/restablecer-password');
 @endphp
-<body class="{{ ($isStaffRoute && !$isAuthRoute) ? 'staff-layout' : '' }}">
+<body class="d-flex flex-column min-vh-100 {{ ($isStaffRoute && !$isAuthRoute) ? 'staff-layout' : '' }}">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
 
@@ -36,7 +36,7 @@
         </div>
     </nav>
 
-    <main class="container main-container">
+    <main class="container main-container flex-grow-1 d-flex flex-column justify-content-center">
         @if ($errors->any())
             <div class="alert alert-danger shadow-sm mb-4" style="border-radius: 12px; border-left: 5px solid red; background: rgba(255,255,255,0.9);">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Existen errores en el formulario:</strong>
@@ -50,7 +50,7 @@
         @yield('content')
     </main>
 
-    <footer class="text-center py-4 mt-auto">
+    <footer class="text-center py-4 mt-auto w-100 position-relative" style="z-index: 10;">
         <p class="mb-0 fw-semibold">&copy; {{ date('Y') }} Ninja Park Kids</p>
         <small>Sistema de Registro y Generación de Pases</small>
     </footer>

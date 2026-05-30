@@ -9,6 +9,8 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+
         :root {
             --ninja-pink: #E6007E;
             --ninja-purple: #8B5CF6;
@@ -470,6 +472,8 @@
 
         .btn-modal-stay:hover { background: #e5e7eb; transform: translateY(-2px); }
         .btn-modal-exit:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(230, 0, 126, 0.4); }
+    
+
         :root {
             --primary: #6D28D9;
             --primary-hover: #5B21B6;
@@ -539,7 +543,7 @@
             object-fit: contain;
         }
 
-        /* NAVEGACIÓN DE PANELES */
+        /* NAVEGACIÃ“N DE PANELES */
         .staff-nav {
             padding: 0 1rem;
             flex-grow: 1;
@@ -710,6 +714,8 @@
                 display: block;
             }
         }
+    
+
         @keyframes ping {
 
             75%,
@@ -718,4 +724,4 @@
                 opacity: 0;
             }
         }
-    </style>
+    

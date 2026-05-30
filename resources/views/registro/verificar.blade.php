@@ -3,7 +3,7 @@
 @section('title', 'Bienvenido | Ninja Park')
 
 @section('content')
-<div class="row justify-content-center align-items-start">
+<div class="row justify-content-center align-items-center">
     <div class="col-md-6 col-lg-5">
         <div class="glass-card p-5 text-center">
             
