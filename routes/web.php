@@ -47,16 +47,16 @@ Route::get('/validar/{token}', [RegistroController::class, 'validarPase'])->name
 */
 
 Route::prefix('staff-ninja')->group(function () {
-    // AutenticaciÃ³n (PÃºblico dentro del prefijo)
+    // Autenticación (Público dentro del prefijo)
     Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // --- RECUPERACIÓN DE CONTRASEÑA (Públicas dentro del prefijo) ---
     Route::get('/recuperar-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('/recuperar-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::post('/recuperar-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('throttle:3,1');
     Route::get('/restablecer-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
-    Route::post('/restablecer-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+    Route::post('/restablecer-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetPassword'])->name('password.update')->middleware('throttle:3,1');
 
     // Rutas Protegidas por AUTH y ROLES (Nivel Operador Integral)
     Route::middleware(['auth', 'role:operador'])->group(function () {
@@ -81,12 +81,12 @@ Route::prefix('staff-ninja')->group(function () {
 
     // Rutas exclusivas para GERENTE
     Route::middleware(['auth', 'role:gerente'])->group(function () {
-        Route::get('/usuarios', [DashboardController::class, 'users'])->name('admin.users');
+        Route::get('/usuarios', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
         Route::post('/usuarios', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('staff.users.store');
         Route::put('/usuarios/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('staff.users.update');
         Route::delete('/usuarios/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('staff.users.destroy');
 
-        // --- CONFIGURACIÃ“N DEL PARQUE ---
+        // --- CONFIGURACIÓN DEL PARQUE ---
         // Legal
         Route::get('/legal', [App\Http\Controllers\Admin\LegalController::class, 'index'])->name('admin.legal.index');
         Route::post('/legal', [App\Http\Controllers\Admin\LegalController::class, 'store'])->name('admin.legal.store');
@@ -94,19 +94,19 @@ Route::prefix('staff-ninja')->group(function () {
         Route::post('/legal/{id}/activar', [App\Http\Controllers\Admin\LegalController::class, 'toggleActivo'])->name('admin.legal.activar');
 
         // Tarifas y Horarios
-        Route::get('/tarifas', [App\Http\Controllers\Admin\ConfigController::class, 'tarifas'])->name('admin.config.tarifas');
-        Route::post('/tarifas', [App\Http\Controllers\Admin\ConfigController::class, 'storeTarifa'])->name('admin.config.tarifas.store');
-        Route::put('/tarifas/{id}', [App\Http\Controllers\Admin\ConfigController::class, 'updateTarifa'])->name('admin.config.tarifas.update');
-        Route::delete('/tarifas/{id}', [App\Http\Controllers\Admin\ConfigController::class, 'destroyTarifa'])->name('admin.config.tarifas.destroy');
-        Route::post('/tarifas/{id}/toggle', [App\Http\Controllers\Admin\ConfigController::class, 'toggleTarifa'])->name('admin.config.tarifas.toggle');
-        Route::put('/horarios', [App\Http\Controllers\Admin\ConfigController::class, 'updateHorarios'])->name('admin.config.horarios.update');
+        Route::get('/tarifas', [App\Http\Controllers\Admin\TarifaController::class, 'index'])->name('admin.config.tarifas');
+        Route::post('/tarifas', [App\Http\Controllers\Admin\TarifaController::class, 'store'])->name('admin.config.tarifas.store');
+        Route::put('/tarifas/{id}', [App\Http\Controllers\Admin\TarifaController::class, 'update'])->name('admin.config.tarifas.update');
+        Route::delete('/tarifas/{id}', [App\Http\Controllers\Admin\TarifaController::class, 'destroy'])->name('admin.config.tarifas.destroy');
+        Route::post('/tarifas/{id}/toggle', [App\Http\Controllers\Admin\TarifaController::class, 'toggle'])->name('admin.config.tarifas.toggle');
+        Route::put('/horarios', [App\Http\Controllers\Admin\TarifaController::class, 'updateHorarios'])->name('admin.config.horarios.update');
 
         // Promociones
-        Route::get('/promociones', [App\Http\Controllers\Admin\ConfigController::class, 'promociones'])->name('admin.config.promociones');
-        Route::post('/promociones', [App\Http\Controllers\Admin\ConfigController::class, 'storePromocion'])->name('admin.config.promociones.store');
-        Route::put('/promociones/{id}', [App\Http\Controllers\Admin\ConfigController::class, 'updatePromocion'])->name('admin.config.promociones.update');
-        Route::delete('/promociones/{id}', [App\Http\Controllers\Admin\ConfigController::class, 'destroyPromocion'])->name('admin.config.promociones.destroy');
-        Route::post('/promociones/{id}/toggle', [App\Http\Controllers\Admin\ConfigController::class, 'togglePromocion'])->name('admin.config.promociones.toggle');
+        Route::get('/promociones', [App\Http\Controllers\Admin\PromocionController::class, 'index'])->name('admin.config.promociones');
+        Route::post('/promociones', [App\Http\Controllers\Admin\PromocionController::class, 'store'])->name('admin.config.promociones.store');
+        Route::put('/promociones/{id}', [App\Http\Controllers\Admin\PromocionController::class, 'update'])->name('admin.config.promociones.update');
+        Route::delete('/promociones/{id}', [App\Http\Controllers\Admin\PromocionController::class, 'destroy'])->name('admin.config.promociones.destroy');
+        Route::post('/promociones/{id}/toggle', [App\Http\Controllers\Admin\PromocionController::class, 'toggle'])->name('admin.config.promociones.toggle');
     });
 });
 // --- API BOT PÚBLICA ---
@@ -117,7 +117,7 @@ Route::prefix('api/bot')->group(function () {
 });
 
 // --- MALOCHY CHATBOT (Publico) ---
-Route::prefix('api/malochy')->group(function () {
+Route::prefix('api/malochy')->middleware('throttle:60,1')->group(function () {
     Route::post('/chat',     [App\Http\Controllers\Api\ChatbotController::class, 'chat'])->name('malochy.chat');
     Route::post('/verificar',[App\Http\Controllers\Api\ChatbotController::class, 'verificarCedula'])->name('malochy.verificar');
 });

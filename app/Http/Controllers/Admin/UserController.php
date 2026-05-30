@@ -8,9 +8,22 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Rol;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        // Solo Gerente puede gestionar usuarios
+        if (!Auth::user()->esGerente()) {
+            return redirect()->route('admin.dashboard')->with('error', 'No tiene permisos para gestionar usuarios.');
+        }
+
+        $usuarios = User::with('rol')->get();
+        $roles = Rol::orderBy('id')->get();
+        return view('admin.users', compact('usuarios', 'roles'));
+    }
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

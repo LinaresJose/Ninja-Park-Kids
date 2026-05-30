@@ -51,4 +51,12 @@ class User extends Authenticatable
     // Nivel jerárquico: El Gerente puede todo lo de Admin, Admin puede todo lo de Operador
     public function tieneAccesoAdmin() { return in_array($this->rol->nombre_rol, ['Gerente', 'Admin']); }
     public function tieneAccesoOperador() { return in_array($this->rol->nombre_rol, ['Gerente', 'Admin', 'Operador Integral']); }
+
+    /**
+     * Envía la notificación de restablecimiento de contraseña encolada en segundo plano.
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\ResetPasswordQueueNotification($token));
+    }
 }

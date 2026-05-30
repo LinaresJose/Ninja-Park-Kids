@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class ReportesController extends Controller
 {
@@ -133,11 +134,13 @@ class ReportesController extends Controller
             }
         }
 
-        // Construir el src de la imagen: puede ser base64 o una ruta
+        // Construir el src de la imagen: puede ser base64 o una ruta física en disco
         $firma_base64_o_path = $firma->firma_base64;
 
-        // Si el valor guardado es solo base64 (sin el prefijo data:image), lo añadimos
-        if (!str_starts_with($firma_base64_o_path, 'data:')) {
+        if ($firma_base64_o_path && Storage::disk('public')->exists($firma_base64_o_path)) {
+            $fileContent = Storage::disk('public')->get($firma_base64_o_path);
+            $firma_base64_o_path = 'data:image/png;base64,' . base64_encode($fileContent);
+        } elseif ($firma_base64_o_path && !str_starts_with($firma_base64_o_path, 'data:')) {
             $firma_base64_o_path = 'data:image/png;base64,' . $firma_base64_o_path;
         }
 
