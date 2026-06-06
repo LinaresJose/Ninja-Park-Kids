@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('promociones', function (Blueprint $table) {
             $table->id();
-            $table->string('titulo');
+            $table->string('titulo', 150);
             $table->text('descripcion_detallada')->nullable();
             $table->decimal('precio_especial', 10, 2);
             $table->date('fecha_inicio');

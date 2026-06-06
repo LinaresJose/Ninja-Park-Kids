@@ -14,13 +14,13 @@ return new class extends Migration
         if (!Schema::hasTable('representantes')) {
             Schema::create('representantes', function (Blueprint $table) {
                 $table->id();
-                $table->string('cedula')->unique();
-                $table->string('nombre');
-                $table->string('apellido');
+                $table->string('cedula', 8)->unique();
+                $table->string('nombre', 50);
+                $table->string('apellido', 50);
                 $table->date('fecha_nacimiento')->nullable();
-                $table->string('correo')->nullable();
-                $table->string('telefono')->nullable();
-                $table->string('parentesco')->nullable();
+                $table->string('correo', 100)->nullable();
+                $table->string('telefono', 11)->nullable();
+                $table->string('parentesco', 30)->nullable();
             });
         }
     }

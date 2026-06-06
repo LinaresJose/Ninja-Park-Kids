@@ -15,8 +15,8 @@ return new class extends Migration
             Schema::create('participantes', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('representante_id')->constrained('representantes')->onDelete('cascade');
-                $table->string('nombre');
-                $table->string('apellido');
+                $table->string('nombre', 50);
+                $table->string('apellido', 50);
                 $table->date('fecha_nacimiento')->nullable();
             });
         }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tarifas', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre_tarifa');
+            $table->string('nombre_tarifa', 100);
             $table->integer('duracion_minutos')->nullable()->comment('Null para tiempo ilimitado');
             $table->decimal('precio', 10, 2);
             $table->boolean('esta_activa')->default(true);
