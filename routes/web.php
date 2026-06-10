@@ -75,6 +75,7 @@ Route::prefix('staff-ninja')->group(function () {
         // --- MÃ“DULO REPORTES Y DESCARGAS ---
         Route::get('/reportes', [ReportesController::class, 'index'])->name('admin.reportes');
         Route::get('/reportes/exportar', [ReportesController::class, 'exportarExcel'])->name('admin.reportes.exportar');
+        Route::get('/reportes/exportar-pdf', [ReportesController::class, 'exportarPdf'])->name('admin.reportes.exportar_pdf');
         Route::get('/reportes/buscar-cliente', [ReportesController::class, 'buscarCliente'])->name('admin.reportes.buscar');
         Route::get('/reportes/pdf/{acuerdo_id}', [ReportesController::class, 'generarPdf'])->name('admin.reportes.pdf');
     });

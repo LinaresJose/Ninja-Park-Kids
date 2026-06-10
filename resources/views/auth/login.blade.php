@@ -10,7 +10,7 @@
                 <div class="mb-3 d-inline-block p-3 rounded-circle" style="background: var(--ninja-purple); color: white;">
                     <i class="bi bi-shield-lock-fill" style="font-size: 2.5rem;"></i>
                 </div>
-                <h2 class="fw-black" style="color: var(--ninja-dark); font-weight: 900;">PORTAL STAFF</h2>
+                <h2 class="fw-black" style="color: var(--ninja-dark); font-weight: 900;">PORTAL DEL PERSONAL</h2>
                 <p class="text-muted">Ninja Park Management System</p>
             </div>
 

@@ -1,7 +1,7 @@
 @extends('diseños.staff')
 
 @section('title', 'Admin Dashboard | Ninja Park')
-@section('title_header', 'Dashboard Principal')
+@section('title_header', 'Panel Principal')
 
 @section('content')
 <div class="row g-4 mb-3">

@@ -60,7 +60,7 @@ class ForgotPasswordController extends Controller
         // Enviar el correo usando la plantilla HTML premium
         Mail::send('emails.recuperar', ['link' => $link, 'nombre' => $usuario->nombre], function ($message) use ($request) {
             $message->to($request->correo);
-            $message->subject('🔑 Restablecer acceso a Portal Staff - Ninja Park');
+            $message->subject('🔑 Restablecer acceso a Portal del Personal - Ninja Park');
         });
 
         return back()->with('success', '¡Enlace de recuperación enviado! Revisa tu bandeja de entrada corporativa y tu carpeta de spam.');
@@ -138,6 +138,6 @@ class ForgotPasswordController extends Controller
         // Borrar el token para que no se pueda reutilizar
         DB::table('password_reset_tokens')->where('correo', $request->correo)->delete();
 
-        return redirect()->route('login')->with('success', 'Contraseña restablecida con éxito. Ya puedes ingresar al Portal Staff.');
+        return redirect()->route('login')->with('success', 'Contraseña restablecida con éxito. Ya puedes ingresar al Portal del Personal.');
     }
 }

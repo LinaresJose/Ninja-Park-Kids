@@ -97,11 +97,11 @@
 
             <div class="d-flex flex-row align-items-center gap-3">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="position-relative d-flex h-3 w-3">
-                        <span class="animate-ping position-absolute inline-flex h-100 w-100 rounded-circle opacity-75"
-                            style="background:var(--badge-success-text); width:8px; height:8px; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
-                        <span class="position-relative inline-flex rounded-circle"
-                            style="background:var(--badge-success-text); width:8px; height:8px;"></span>
+                    <span class="position-relative d-inline-flex align-items-center justify-content-center" style="width: 10px; height: 10px;">
+                        <span class="position-absolute rounded-circle opacity-75"
+                            style="background: var(--badge-success-text); width: 100%; height: 100%; top: 0; left: 0; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
+                        <span class="position-relative rounded-circle"
+                            style="background: var(--badge-success-text); width: 8px; height: 8px;"></span>
                     </span>
                     <span class="badge-pastel badge-pastel-success">Sistema Online</span>
                 </div>

@@ -166,45 +166,145 @@
 }
 .alert-ok  { background: var(--badge-success-bg); color: var(--badge-success-text); }
 .alert-err { background: var(--badge-error-bg);   color: var(--badge-error-text); }
+.btn-pdf-ninja {
+    background: #DC2626;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.4rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background .2s, transform .15s, box-shadow .2s;
+}
+.btn-pdf-ninja:hover {
+    background: #B91C1C;
+    box-shadow: 0 4px 14px rgba(220,38,38,.35);
+    transform: translateY(-1px);
+    color: #fff;
+}
+.btn-pdf-ninja:disabled {
+    background: #FCA5A5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.btn-pdf-ninja .btn-spinner {
+    width: 15px; height: 15px;
+    border: 2.5px solid rgba(255,255,255,.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin-anim .7s linear infinite;
+}
+.transition-transform {
+    transition: transform 0.2s ease-in-out;
+}
+button[aria-expanded="true"] #collapseIcon {
+    transform: rotate(180deg);
+}
 </style>
 @endpush
 
 @section('content')
 
-{{-- ── SECCIÓN 1: EXCEL ─────────────────────────────────────── --}}
+{{-- ── SECCIÓN 1: REPORTE DINÁMICO ───────────────────────────── --}}
 <div class="card-modern mb-4">
-    <p class="section-label"><i class="bi bi-table me-1"></i>Exportación Masiva de Datos</p>
-    <h5 class="font-title mb-1" style="font-size:1.05rem;">Descargar Registros en Excel (.xlsx)</h5>
+    <p class="section-label"><i class="bi bi-file-earmark-spreadsheet-fill me-1"></i>Reporte Dinámico de Registros</p>
+    <h5 class="font-title mb-1" style="font-size:1.05rem;">Descargar Reportes (Excel / PDF)</h5>
     <p class="text-muted mb-4" style="font-size:.83rem;max-width:560px;">
-        Genera un archivo con representantes, menores a cargo y sello exacto de firma, filtrado por rango de fechas.
+        Genera reportes masivos de representantes, menores y firmas, filtrado por fechas. Selecciona qué columnas exportar y escoge el formato.
     </p>
 
-    <form id="frmExcel" action="{{ route('admin.reportes.exportar') }}" method="GET" target="_blank">
-        <div class="row g-3 align-items-end">
-            <div class="col-12 col-sm-5 col-xl-4">
+    <form id="frmExcel" method="GET" target="_blank">
+        <!-- Rango de Fechas -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-sm-6">
                 <div class="date-field">
                     <label for="fpDesde">Desde</label>
                     <i class="bi bi-calendar-event ico"></i>
                     <input type="text" id="fpDesde" name="desde" placeholder="Selecciona fecha" autocomplete="off" required>
                 </div>
             </div>
-            <div class="col-12 col-sm-5 col-xl-4">
+            <div class="col-12 col-sm-6">
                 <div class="date-field">
                     <label for="fpHasta">Hasta</label>
                     <i class="bi bi-calendar-event ico"></i>
                     <input type="text" id="fpHasta" name="hasta" placeholder="Selecciona fecha" autocomplete="off" required>
                 </div>
             </div>
-            <div class="col-12 col-sm-2 col-xl-4">
-                <button type="submit" class="btn-primary-ninja" id="btnExcel">
-                    <span class="btn-spinner spin-hide"></span>
-                    <i class="bi bi-file-earmark-excel-fill spin-show"></i>
-                    <span class="spin-show">Descargar Excel</span>
-                    <span class="spin-hide">Generando…</span>
-                </button>
+        </div>
+
+        <!-- Botón para Colapsar/Desplegar Columnas -->
+        <div class="mb-4">
+            <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 border-2 fw-bold" 
+                data-bs-toggle="collapse" data-bs-target="#collapseColumnas" aria-expanded="false" aria-controls="collapseColumnas" style="font-size: 0.8rem;">
+                <i class="bi bi-sliders"></i>
+                <span>Personalizar Columnas del Reporte</span>
+                <i class="bi bi-chevron-down transition-transform" id="collapseIcon"></i>
+            </button>
+        </div>
+
+        <!-- Selector de Columnas Premium (Oculto por defecto y colapsable) -->
+        <div class="collapse mb-4" id="collapseColumnas">
+            <div class="card p-3 border border-1 border-light-subtle rounded-4 bg-light">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <span class="fw-bold font-title text-dark" style="font-size: 0.82rem; letter-spacing: 0.03em;">
+                        <i class="bi bi-layout-three-columns me-1" style="color: var(--primary);"></i> SELECCIONAR COLUMNAS PARA EL REPORTE
+                    </span>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 me-3 fw-bold" style="font-size: 0.72rem; color: var(--primary);" id="btnSelectAllCols">Marcar todas</button>
+                        <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 fw-bold" style="font-size: 0.72rem; color: var(--text-muted);" id="btnDeselectAllCols">Desmarcar todas</button>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    @foreach([
+                        'acuerdo_id' => 'ID Acuerdo',
+                        'rep_nombre' => 'Nombre Representante',
+                        'correo' => 'Correo Electrónico',
+                        'telefono' => 'Teléfono',
+                        'cedula' => 'Cédula Identidad',
+                        'rep_fnac' => 'F. Nac. Rep.',
+                        'parentesco' => 'Parentesco',
+                        'part_nombre' => 'Nombre del Menor',
+                        'part_fnac' => 'F. Nac. Menor',
+                        'edad_menor' => 'Edad del Menor',
+                        'fecha_firma' => 'Fecha de Firma',
+                        'hora_firma' => 'Hora de Firma'
+                    ] as $key => $label)
+                    <div class="col-6 col-sm-4 col-xl-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="columnas[]" value="{{ $key }}" id="col_{{$key}}" checked>
+                            <label class="form-check-label small text-secondary fw-semibold" for="col_{{$key}}" style="cursor: pointer;">{{ $label }}</label>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </div>
-        <div id="alertaExcel"></div>
+
+        <!-- Botones de Descarga -->
+        <div class="d-flex gap-3 flex-wrap">
+            <button type="button" class="btn-primary-ninja flex-grow-1 flex-sm-grow-0" id="btnExcel">
+                <span class="btn-spinner spin-hide"></span>
+                <i class="bi bi-file-earmark-excel-fill spin-show"></i>
+                <span class="spin-show">Descargar Excel</span>
+                <span class="spin-hide">Generando Excel…</span>
+            </button>
+            
+            <button type="button" class="btn-pdf-ninja flex-grow-1 flex-sm-grow-0" id="btnPdfBulk">
+                <span class="btn-spinner spin-hide"></span>
+                <i class="bi bi-file-earmark-pdf-fill spin-show"></i>
+                <span class="spin-show">Descargar PDF</span>
+                <span class="spin-hide">Generando PDF…</span>
+            </button>
+        </div>
+
+        <div id="alertaExcel" class="mt-3"></div>
     </form>
 </div>
 
@@ -259,24 +359,71 @@ document.addEventListener('DOMContentLoaded', function () {
         maxDate: 'today', locale
     });
 
-    // ── Spinner Excel ─────────────────────────────────────────
+    // ── Descarga Dinámica (Excel & PDF) ───────────────────────
     const frmExcel   = document.getElementById('frmExcel');
     const btnExcel   = document.getElementById('btnExcel');
+    const btnPdfBulk = document.getElementById('btnPdfBulk');
     const alertaDiv  = document.getElementById('alertaExcel');
 
-    frmExcel.addEventListener('submit', function(e) {
-        if (!document.getElementById('fpDesde').value || !document.getElementById('fpHasta').value) {
-            e.preventDefault();
+    // Manejo de switches para seleccionar/deseleccionar todas
+    const checkboxes = document.querySelectorAll('input[name="columnas[]"]');
+    document.getElementById('btnSelectAllCols').addEventListener('click', () => {
+        checkboxes.forEach(cb => cb.checked = true);
+    });
+    document.getElementById('btnDeselectAllCols').addEventListener('click', () => {
+        checkboxes.forEach(cb => cb.checked = false);
+    });
+
+    function validateDates() {
+        const desde = document.getElementById('fpDesde').value;
+        const hasta = document.getElementById('fpHasta').value;
+        if (!desde || !hasta) {
             alertaDiv.innerHTML = '<div class="inline-alert alert-err"><i class="bi bi-exclamation-triangle-fill"></i> Selecciona ambas fechas antes de descargar.</div>';
-            return;
+            return false;
         }
+        // Validar que al menos una columna esté seleccionada
+        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+        if (!anyChecked) {
+            alertaDiv.innerHTML = '<div class="inline-alert alert-err"><i class="bi bi-exclamation-triangle-fill"></i> Debes seleccionar al menos una columna para exportar.</div>';
+            return false;
+        }
+        alertaDiv.innerHTML = '';
+        return true;
+    }
+
+    btnExcel.addEventListener('click', function() {
+        if (!validateDates()) return;
+        
+        frmExcel.action = "{{ route('admin.reportes.exportar') }}";
         btnExcel.classList.add('is-loading');
         btnExcel.disabled = true;
-        alertaDiv.innerHTML = '';
+        btnPdfBulk.disabled = true;
+        
+        frmExcel.submit();
+        
         setTimeout(() => {
             btnExcel.classList.remove('is-loading');
             btnExcel.disabled = false;
+            btnPdfBulk.disabled = false;
             alertaDiv.innerHTML = '<div class="inline-alert alert-ok"><i class="bi bi-check-circle-fill"></i> El archivo Excel se está descargando.</div>';
+        }, 3500);
+    });
+
+    btnPdfBulk.addEventListener('click', function() {
+        if (!validateDates()) return;
+        
+        frmExcel.action = "{{ route('admin.reportes.exportar_pdf') }}";
+        btnPdfBulk.classList.add('is-loading');
+        btnExcel.disabled = true;
+        btnPdfBulk.disabled = true;
+        
+        frmExcel.submit();
+        
+        setTimeout(() => {
+            btnPdfBulk.classList.remove('is-loading');
+            btnExcel.disabled = false;
+            btnPdfBulk.disabled = false;
+            alertaDiv.innerHTML = '<div class="inline-alert alert-ok"><i class="bi bi-check-circle-fill"></i> El reporte PDF se está descargando.</div>';
         }, 3500);
     });
 

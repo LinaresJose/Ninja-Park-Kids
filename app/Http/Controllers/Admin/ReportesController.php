@@ -10,6 +10,7 @@ use App\Models\TerminoCondicion;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,14 +40,112 @@ class ReportesController extends Controller
         $request->validate([
             'desde' => 'required|date',
             'hasta' => 'required|date|after_or_equal:desde',
+            'columnas' => 'nullable|array',
         ]);
 
         $desde = $request->input('desde');
         $hasta = $request->input('hasta');
+        $columnas = $request->input('columnas', []);
 
         $filename = 'ninja-park-registros_' . $desde . '_al_' . $hasta . '.xlsx';
 
-        return Excel::download(new RegistrosExport($desde, $hasta), $filename);
+        return Excel::download(new RegistrosExport($desde, $hasta, $columnas), $filename);
+    }
+
+    /**
+     * Descarga el PDF con el listado masivo en diseño horizontal Landscape.
+     */
+    public function exportarPdf(Request $request)
+    {
+        if (!Auth::user()->tieneAccesoAdmin()) {
+            abort(403, 'Acceso no autorizado.');
+        }
+
+        $request->validate([
+            'desde' => 'required|date',
+            'hasta' => 'required|date|after_or_equal:desde',
+            'columnas' => 'nullable|array',
+        ]);
+
+        $desde = $request->input('desde');
+        $hasta = $request->input('hasta');
+        $columnas = $request->input('columnas', [
+            'acuerdo_id', 'rep_nombre', 'correo', 'telefono', 'cedula', 
+            'rep_fnac', 'parentesco', 'part_nombre', 'part_fnac', 
+            'edad_menor', 'fecha_firma', 'hora_firma'
+        ]);
+
+        // Mapeo de cabeceras para la vista
+        $mapColumnas = [
+            'acuerdo_id' => 'ID Acuerdo',
+            'rep_nombre' => 'Representante',
+            'correo' => 'Correo',
+            'telefono' => 'Teléfono',
+            'cedula' => 'Cédula',
+            'rep_fnac' => 'F. Nac. Rep.',
+            'parentesco' => 'Parentesco',
+            'part_nombre' => 'Menor',
+            'part_fnac' => 'F. Nac. Menor',
+            'edad_menor' => 'Edad Menor',
+            'fecha_firma' => 'Fecha Firma',
+            'hora_firma' => 'Hora Firma',
+        ];
+
+        // Consulta de registros
+        $registros = DB::table('acuerdos_firmados as af')
+            ->join('representantes as r', 'af.representante_id', '=', 'r.id')
+            ->join('detalle_acuerdo_participantes as dap', 'af.id', '=', 'dap.acuerdo_id')
+            ->join('participantes as p', 'dap.participante_id', '=', 'p.id')
+            ->whereBetween('af.fecha_firma', [
+                Carbon::parse($desde)->startOfDay(),
+                Carbon::parse($hasta)->endOfDay(),
+            ])
+            ->whereNotNull('af.fecha_firma')
+            ->select(
+                'af.id as acuerdo_id',
+                'r.nombre as rep_nombre',
+                'r.apellido as rep_apellido',
+                'r.correo',
+                'r.telefono',
+                'r.cedula',
+                'r.fecha_nacimiento as rep_fnac',
+                'r.parentesco',
+                'p.nombre as part_nombre',
+                'p.apellido as part_apellido',
+                'p.fecha_nacimiento as part_fnac',
+                'af.fecha_firma'
+            )
+            ->orderBy('af.fecha_firma', 'desc')
+            ->get();
+
+        // Codificación del logo en Base64 para dompdf
+        $logoPath = public_path('img/logo.png');
+        $logoBase64 = '';
+        if (file_exists($logoPath)) {
+            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
+        $fechaReporte = Carbon::now()->format('d/m/Y H:i:s');
+        $usuario = Auth::user();
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('pdf.reporte_registros', compact(
+            'registros',
+            'desde',
+            'hasta',
+            'columnas',
+            'mapColumnas',
+            'logoBase64',
+            'fechaReporte',
+            'usuario'
+        ));
+
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->setOption(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => false]);
+
+        $nombreArchivo = 'reporte-registros-' . $desde . '-al-' . $hasta . '.pdf';
+
+        return $pdf->stream($nombreArchivo);
     }
 
     /**

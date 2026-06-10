@@ -88,7 +88,7 @@
         <!-- Contenido -->
         <div class="content">
             <h2>¡Hola, {{ $nombre }}!</h2>
-            <p>Hemos recibido una solicitud para restablecer la contraseña de acceso a tu cuenta en el **Portal Staff de Ninja Park**.</p>
+            <p>Hemos recibido una solicitud para restablecer la contraseña de acceso a tu cuenta en el **Portal del Personal de Ninja Park**.</p>
             <p>Para continuar con el proceso, haz clic en el siguiente botón seguro de recuperación:</p>
             
             <div class="btn-container">
