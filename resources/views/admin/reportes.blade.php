@@ -239,29 +239,54 @@ button[aria-expanded="true"] #collapseIcon {
             </div>
         </div>
 
-        <!-- Botón para Colapsar/Desplegar Columnas -->
-        <div class="mb-4">
-            <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 border-2 fw-bold" 
-                data-bs-toggle="collapse" data-bs-target="#collapseColumnas" aria-expanded="false" aria-controls="collapseColumnas" style="font-size: 0.8rem;">
+        <!-- Barra de Acciones: Botones de Descarga + Toggle de Columnas -->
+        <div class="d-flex align-items-center gap-2 flex-wrap mb-0">
+            <!-- Descargar Excel -->
+            <button type="button" class="btn-primary-ninja" id="btnExcel">
+                <span class="btn-spinner spin-hide"></span>
+                <i class="bi bi-file-earmark-excel-fill spin-show"></i>
+                <span class="spin-show">Descargar Excel</span>
+                <span class="spin-hide">Generando Excel...</span>
+            </button>
+
+            <!-- Descargar PDF -->
+            <button type="button" class="btn-pdf-ninja" id="btnPdfBulk">
+                <span class="btn-spinner spin-hide"></span>
+                <i class="bi bi-file-earmark-pdf-fill spin-show"></i>
+                <span class="spin-show">Descargar PDF</span>
+                <span class="spin-hide">Generando PDF...</span>
+            </button>
+
+            <!-- Separador visual -->
+            <div style="width: 1px; height: 30px; background: #E2E8F0;" class="d-none d-sm-block"></div>
+
+            <!-- Toggle Personalizar Columnas -->
+            <button type="button"
+                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 fw-bold"
+                data-bs-toggle="collapse" data-bs-target="#collapseColumnas"
+                aria-expanded="false" aria-controls="collapseColumnas"
+                style="font-size: 0.8rem; border-style: dashed; height: 38px;">
                 <i class="bi bi-sliders"></i>
-                <span>Personalizar Columnas del Reporte</span>
+                <span>Personalizar Columnas</span>
                 <i class="bi bi-chevron-down transition-transform" id="collapseIcon"></i>
             </button>
         </div>
 
-        <!-- Selector de Columnas Premium (Oculto por defecto y colapsable) -->
-        <div class="collapse mb-4" id="collapseColumnas">
-            <div class="card p-3 border border-1 border-light-subtle rounded-4 bg-light">
+        <div id="alertaExcel" class="mt-3"></div>
+
+        <!-- Selector de Columnas (Colapsable, oculto por defecto) -->
+        <div class="collapse mt-4" id="collapseColumnas">
+            <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 1.1rem 1.25rem;">
                 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                    <span class="fw-bold font-title text-dark" style="font-size: 0.82rem; letter-spacing: 0.03em;">
-                        <i class="bi bi-layout-three-columns me-1" style="color: var(--primary);"></i> SELECCIONAR COLUMNAS PARA EL REPORTE
+                    <span class="fw-bold font-title" style="font-size: 0.78rem; letter-spacing: 0.06em; color: var(--text-muted); text-transform: uppercase;">
+                        <i class="bi bi-layout-three-columns me-1" style="color: var(--primary);"></i> Columnas del Reporte
                     </span>
-                    <div>
-                        <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 me-3 fw-bold" style="font-size: 0.72rem; color: var(--primary);" id="btnSelectAllCols">Marcar todas</button>
+                    <div class="d-flex gap-3">
+                        <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 fw-bold" style="font-size: 0.72rem; color: var(--primary);" id="btnSelectAllCols">Marcar todas</button>
                         <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 fw-bold" style="font-size: 0.72rem; color: var(--text-muted);" id="btnDeselectAllCols">Desmarcar todas</button>
                     </div>
                 </div>
-                <div class="row g-3">
+                <div class="row g-2">
                     @foreach([
                         'acuerdo_id' => 'ID Acuerdo',
                         'rep_nombre' => 'Nombre Representante',
@@ -277,9 +302,9 @@ button[aria-expanded="true"] #collapseIcon {
                         'hora_firma' => 'Hora de Firma'
                     ] as $key => $label)
                     <div class="col-6 col-sm-4 col-xl-3">
-                        <div class="form-check form-switch">
+                        <div class="form-check form-switch mb-0">
                             <input class="form-check-input" type="checkbox" name="columnas[]" value="{{ $key }}" id="col_{{$key}}" checked>
-                            <label class="form-check-label small text-secondary fw-semibold" for="col_{{$key}}" style="cursor: pointer;">{{ $label }}</label>
+                            <label class="form-check-label small fw-semibold" for="col_{{$key}}" style="cursor: pointer; color: #374151;">{{ $label }}</label>
                         </div>
                     </div>
                     @endforeach
@@ -287,24 +312,6 @@ button[aria-expanded="true"] #collapseIcon {
             </div>
         </div>
 
-        <!-- Botones de Descarga -->
-        <div class="d-flex gap-3 flex-wrap">
-            <button type="button" class="btn-primary-ninja flex-grow-1 flex-sm-grow-0" id="btnExcel">
-                <span class="btn-spinner spin-hide"></span>
-                <i class="bi bi-file-earmark-excel-fill spin-show"></i>
-                <span class="spin-show">Descargar Excel</span>
-                <span class="spin-hide">Generando Excel…</span>
-            </button>
-            
-            <button type="button" class="btn-pdf-ninja flex-grow-1 flex-sm-grow-0" id="btnPdfBulk">
-                <span class="btn-spinner spin-hide"></span>
-                <i class="bi bi-file-earmark-pdf-fill spin-show"></i>
-                <span class="spin-show">Descargar PDF</span>
-                <span class="spin-hide">Generando PDF…</span>
-            </button>
-        </div>
-
-        <div id="alertaExcel" class="mt-3"></div>
     </form>
 </div>
 
