@@ -12,7 +12,7 @@
 
     <div class="row">
         <!-- SECCIÓN TARIFAS -->
-        <div class="col-md-7">
+        <div class="col-md-6">
             <div class="card-modern mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="font-title m-0">Gestión de Tarifas</h5>
@@ -114,7 +114,7 @@
         </div>
 
         <!-- SECCIÓN HORARIOS -->
-        <div class="col-md-5">
+        <div class="col-md-6">
             <div class="card-modern">
                 <h5 class="font-title mb-4">Horario Operativo</h5>
                 <form action="{{ route('admin.config.horarios.update') }}" method="POST">
@@ -123,27 +123,27 @@
                     @php $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']; @endphp
                     
                     @foreach($horarios as $horario)
-                    <div class="d-flex align-items-center gap-2 mb-3 flex-wrap flex-sm-nowrap">
-                        <!-- Día -->
-                        <div class="fw-bold" style="flex: 0 0 85px; font-size: 0.95rem;">
-                            {{ $dias[$horario->dia_semana] }}
-                        </div>
-                        
-                        <!-- Entradas de Hora -->
-                        <div class="d-flex flex-grow-1 gap-2">
-                            <input type="time" name="horarios[{{ $horario->id }}][hora_apertura]" 
-                                   class="form-control form-control-sm text-center" 
-                                   style="min-width: 115px; width: 100%;" 
-                                   value="{{ $horario->hora_apertura }}">
-                            <input type="time" name="horarios[{{ $horario->id }}][hora_cierre]" 
-                                   class="form-control form-control-sm text-center" 
-                                   style="min-width: 115px; width: 100%;" 
-                                   value="{{ $horario->hora_cierre }}">
-                        </div>
+                    <div class="d-flex align-items-center mb-3 gap-2 flex-nowrap">
+                        {{-- Día de la semana --}}
+                        <div class="fw-bold text-nowrap" style="width: 90px; min-width: 90px; font-size: 0.88rem;">{{ $dias[$horario->dia_semana] }}</div>
 
-                        <!-- Switch Cerrado -->
-                        <div class="form-check form-switch mb-0 ms-sm-2 text-end" style="flex: 0 0 85px;">
-                            <input class="form-check-input" type="checkbox" name="horarios[{{ $horario->id }}][esta_cerrado]" value="1" {{ $horario->esta_cerrado ? 'checked' : '' }}>
+                        {{-- Input Hora Apertura --}}
+                        <input type="time" name="horarios[{{ $horario->id }}][hora_apertura]"
+                            class="form-control form-control-sm"
+                            style="min-width: 130px; width: 130px;"
+                            value="{{ $horario->hora_apertura }}">
+
+                        {{-- Input Hora Cierre --}}
+                        <input type="time" name="horarios[{{ $horario->id }}][hora_cierre]"
+                            class="form-control form-control-sm"
+                            style="min-width: 130px; width: 130px;"
+                            value="{{ $horario->hora_cierre }}">
+
+                        {{-- Toggle Cerrado --}}
+                        <div class="form-check form-switch mb-0 ms-auto text-nowrap">
+                            <input class="form-check-input" type="checkbox"
+                                name="horarios[{{ $horario->id }}][esta_cerrado]"
+                                value="1" {{ $horario->esta_cerrado ? 'checked' : '' }}>
                             <label class="form-check-label small text-muted">Cerrado</label>
                         </div>
                     </div>
