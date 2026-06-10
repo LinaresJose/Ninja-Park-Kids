@@ -123,19 +123,28 @@
                     @php $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']; @endphp
                     
                     @foreach($horarios as $horario)
-                    <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
-                        <div class="fw-bold" style="width: 100px; min-width: 100px;">{{ $dias[$horario->dia_semana] }}</div>
-                        <div class="flex-grow-1" style="min-width: 110px;">
-                            <input type="time" name="horarios[{{ $horario->id }}][hora_apertura]" class="form-control form-control-sm" value="{{ $horario->hora_apertura }}">
+                    <div class="d-flex align-items-center gap-2 mb-3 flex-wrap flex-sm-nowrap">
+                        <!-- Día -->
+                        <div class="fw-bold" style="flex: 0 0 85px; font-size: 0.95rem;">
+                            {{ $dias[$horario->dia_semana] }}
                         </div>
-                        <div class="flex-grow-1" style="min-width: 110px;">
-                            <input type="time" name="horarios[{{ $horario->id }}][hora_cierre]" class="form-control form-control-sm" value="{{ $horario->hora_cierre }}">
+                        
+                        <!-- Entradas de Hora -->
+                        <div class="d-flex flex-grow-1 gap-2">
+                            <input type="time" name="horarios[{{ $horario->id }}][hora_apertura]" 
+                                   class="form-control form-control-sm text-center" 
+                                   style="min-width: 115px; width: 100%;" 
+                                   value="{{ $horario->hora_apertura }}">
+                            <input type="time" name="horarios[{{ $horario->id }}][hora_cierre]" 
+                                   class="form-control form-control-sm text-center" 
+                                   style="min-width: 115px; width: 100%;" 
+                                   value="{{ $horario->hora_cierre }}">
                         </div>
-                        <div class="text-end" style="width: 90px; min-width: 90px;">
-                            <div class="form-check form-switch d-inline-block text-start">
-                                <input class="form-check-input" type="checkbox" name="horarios[{{ $horario->id }}][esta_cerrado]" value="1" {{ $horario->esta_cerrado ? 'checked' : '' }}>
-                                <label class="form-check-label small text-muted">Cerrado</label>
-                            </div>
+
+                        <!-- Switch Cerrado -->
+                        <div class="form-check form-switch mb-0 ms-sm-2 text-end" style="flex: 0 0 85px;">
+                            <input class="form-check-input" type="checkbox" name="horarios[{{ $horario->id }}][esta_cerrado]" value="1" {{ $horario->esta_cerrado ? 'checked' : '' }}>
+                            <label class="form-check-label small text-muted">Cerrado</label>
                         </div>
                     </div>
                     @endforeach
