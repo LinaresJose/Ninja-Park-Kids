@@ -129,22 +129,22 @@
 
                         {{-- Input Hora Apertura --}}
                         <input type="time" name="horarios[{{ $horario->id }}][hora_apertura]"
-                            class="form-control form-control-sm"
-                            style="min-width: 130px; width: 130px;"
+                            class="form-control form-control-sm flex-grow-1"
+                            style="min-width: 115px;"
                             value="{{ $horario->hora_apertura }}">
 
                         {{-- Input Hora Cierre --}}
                         <input type="time" name="horarios[{{ $horario->id }}][hora_cierre]"
-                            class="form-control form-control-sm"
-                            style="min-width: 130px; width: 130px;"
+                            class="form-control form-control-sm flex-grow-1"
+                            style="min-width: 115px;"
                             value="{{ $horario->hora_cierre }}">
 
                         {{-- Toggle Cerrado --}}
-                        <div class="form-check form-switch mb-0 ms-auto text-nowrap">
+                        <div class="form-check form-switch mb-0 text-nowrap ps-4 ms-1">
                             <input class="form-check-input" type="checkbox"
                                 name="horarios[{{ $horario->id }}][esta_cerrado]"
                                 value="1" {{ $horario->esta_cerrado ? 'checked' : '' }}>
-                            <label class="form-check-label small text-muted">Cerrado</label>
+                            <label class="form-check-label small text-muted" style="font-size: 0.8rem;">Cerrado</label>
                         </div>
                     </div>
                     @endforeach
