@@ -35,7 +35,6 @@
             min-height: 100vh;
             color: var(--ninja-dark);
             position: relative;
-            overflow-x: hidden;
         }
 
         @keyframes gradientBG {
@@ -613,7 +612,6 @@
             flex-direction: column;
             min-height: 100vh;
             width: calc(100% - var(--sidebar-width));
-            padding-top: 74px; /* Fixed header compensation */
         }
 
         /* FIXED SOLID TOP HEADER */
@@ -621,10 +619,8 @@
             background: #FFFFFF;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             padding: 1rem 2rem;
-            position: fixed;
+            position: sticky;
             top: 0;
-            right: 0;
-            width: calc(100% - var(--sidebar-width));
             z-index: 1030;
             display: flex;
             justify-content: space-between;
