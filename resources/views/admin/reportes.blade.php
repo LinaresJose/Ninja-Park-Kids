@@ -202,9 +202,53 @@
     animation: spin-anim .7s linear infinite;
 }
 .transition-transform {
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.25s ease;
 }
-button[aria-expanded="true"] #collapseIcon {
+/* Panel de columnas con animación smooth via max-height */
+#panelColumnas {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.3s ease;
+    opacity: 0;
+    margin-top: 0;
+}
+#panelColumnas.panel-open {
+    max-height: 600px;
+    opacity: 1;
+    margin-top: 1.25rem;
+}
+/* Estilo del botón toggle de columnas */
+#btnToggleColumnas {
+    background: transparent;
+    color: #6B7280;
+    border: 1.5px dashed #CBD5E1;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 38px;
+}
+#btnToggleColumnas:hover {
+    background: #F1F5F9;
+    border-color: var(--primary);
+    color: var(--primary);
+}
+#btnToggleColumnas.activo {
+    background: #EDE9FE;
+    border-color: var(--primary);
+    border-style: solid;
+    color: var(--primary);
+}
+#btnToggleColumnas #collapseIcon {
+    transition: transform 0.25s ease;
+}
+#btnToggleColumnas.activo #collapseIcon {
     transform: rotate(180deg);
 }
 </style>
@@ -260,22 +304,18 @@ button[aria-expanded="true"] #collapseIcon {
             <!-- Separador visual -->
             <div style="width: 1px; height: 30px; background: #E2E8F0;" class="d-none d-sm-block"></div>
 
-            <!-- Toggle Personalizar Columnas -->
-            <button type="button"
-                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 fw-bold"
-                data-bs-toggle="collapse" data-bs-target="#collapseColumnas"
-                aria-expanded="false" aria-controls="collapseColumnas"
-                style="font-size: 0.8rem; border-style: dashed; height: 38px;">
-                <i class="bi bi-sliders"></i>
+            <!-- Toggle Personalizar Columnas (JS puro, sin Bootstrap Collapse) -->
+            <button type="button" id="btnToggleColumnas">
+                <i class="bi bi-sliders2"></i>
                 <span>Personalizar Columnas</span>
-                <i class="bi bi-chevron-down transition-transform" id="collapseIcon"></i>
+                <i class="bi bi-chevron-down" id="collapseIcon"></i>
             </button>
         </div>
 
         <div id="alertaExcel" class="mt-3"></div>
 
-        <!-- Selector de Columnas (Colapsable, oculto por defecto) -->
-        <div class="collapse mt-4" id="collapseColumnas">
+        <!-- Panel de Columnas (animación max-height por JS) -->
+        <div id="panelColumnas">
             <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 1.1rem 1.25rem;">
                 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                     <span class="fw-bold font-title" style="font-size: 0.78rem; letter-spacing: 0.06em; color: var(--text-muted); text-transform: uppercase;">
@@ -368,6 +408,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Descarga Dinámica (Excel & PDF) ───────────────────────
     const frmExcel   = document.getElementById('frmExcel');
+
+    // ── Toggle Panel Columnas (JS puro, sin Bootstrap Collapse) ──
+    const btnToggle  = document.getElementById('btnToggleColumnas');
+    const panelCols  = document.getElementById('panelColumnas');
+    btnToggle.addEventListener('click', function() {
+        const abierto = panelCols.classList.contains('panel-open');
+        panelCols.classList.toggle('panel-open', !abierto);
+        btnToggle.classList.toggle('activo', !abierto);
+    });
     const btnExcel   = document.getElementById('btnExcel');
     const btnPdfBulk = document.getElementById('btnPdfBulk');
     const alertaDiv  = document.getElementById('alertaExcel');
