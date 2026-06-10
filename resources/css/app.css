@@ -613,16 +613,18 @@
             flex-direction: column;
             min-height: 100vh;
             width: calc(100% - var(--sidebar-width));
+            padding-top: 74px; /* Fixed header compensation */
         }
 
-        /* TRANSLUCENT TOP HEADER */
+        /* FIXED SOLID TOP HEADER */
         .staff-header {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
+            background: #FFFFFF;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             padding: 1rem 2rem;
-            position: sticky;
+            position: fixed;
             top: 0;
+            right: 0;
+            width: calc(100% - var(--sidebar-width));
             z-index: 1030;
             display: flex;
             justify-content: space-between;
@@ -706,6 +708,10 @@
 
             .staff-main {
                 margin-left: 0;
+                width: 100%;
+            }
+
+            .staff-header {
                 width: 100%;
             }
 
