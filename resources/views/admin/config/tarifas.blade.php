@@ -140,7 +140,7 @@
                             value="{{ $horario->hora_cierre }}">
 
                         {{-- Toggle Cerrado --}}
-                        <div class="form-check form-switch mb-0 text-nowrap ps-4 ms-1">
+                        <div class="form-check form-switch mb-0 text-nowrap ps-4 ms-3" style="min-width: 85px;">
                             <input class="form-check-input" type="checkbox"
                                 name="horarios[{{ $horario->id }}][esta_cerrado]"
                                 value="1" {{ $horario->esta_cerrado ? 'checked' : '' }}>
