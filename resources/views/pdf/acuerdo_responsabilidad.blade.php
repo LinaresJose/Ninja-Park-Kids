@@ -108,6 +108,17 @@
             line-height: 1.5;
         }
 
+        /* Estilo para el título principal del acuerdo */
+        .legal-content > strong:first-child {
+            font-size: 16px;
+            display: block;
+            text-align: center;
+            margin-top: 5px;
+            margin-bottom: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+            text-transform: uppercase;
+        }
+
         /* Normalizar el HTML que viene de la BD */
         .legal-content p {
             margin-bottom: 5px;
