@@ -9,6 +9,7 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#E6007E">
     <link rel="apple-touch-icon" href="{{ asset('img/icon-192.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/faviconV2.png') }}">
 
     <!-- Local Fonts & Styles -->
     <link rel="stylesheet" href="{{ asset('fonts/outfit/outfit.css') }}">

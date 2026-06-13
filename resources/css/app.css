@@ -614,14 +614,11 @@
             width: calc(100% - var(--sidebar-width));
         }
 
-        /* FIXED SOLID TOP HEADER */
+        /* TOP HEADER (FLOWS WITH CONTENT) */
         .staff-header {
             background: #FFFFFF;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 1030;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -707,9 +704,7 @@
                 width: 100%;
             }
 
-            .staff-header {
-                width: 100%;
-            }
+
 
             .mobile-toggle {
                 display: block;
