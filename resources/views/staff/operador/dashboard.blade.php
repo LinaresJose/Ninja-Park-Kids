@@ -4,7 +4,18 @@
 @section('title_header', 'Control de Escáner y Accesos')
 
 @section('content')
-<div x-data="operadorPanel()" x-init="init()" style="position: relative; z-index: 1050;">
+<div id="operadorPanelEl" x-data="operadorPanel()" x-init="init()" data-registros="{{ json_encode($registros->map(function($acc) {
+    return [
+        'id' => $acc->id,
+        'token' => $acc->token_qr,
+        'fecha' => \Carbon\Carbon::parse($acc->fecha_firma)->format('d/m/Y H:i'),
+        'representante' => $acc->representante->nombre . ' ' . $acc->representante->apellido,
+        'cedula' => $acc->representante->cedula,
+        'telefono' => $acc->representante->telefono,
+        'niños' => $acc->participantes->pluck('nombre')->toArray(),
+        'status' => 'Vigente'
+    ];
+})->toArray()) }}" style="position: relative; z-index: 1050;">
     
     <!-- HEADER DEL PANEL DE TRABAJO -->
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
@@ -190,18 +201,7 @@
 <script>
     function operadorPanel() {
         return {
-            registros: {!! json_encode($registros->map(function($acc) {
-                return [
-                    'id' => $acc->id,
-                    'token' => $acc->token_qr,
-                    'fecha' => \Carbon\Carbon::parse($acc->fecha_firma)->format('d/m/Y H:i'),
-                    'representante' => $acc->representante->nombre . ' ' . $acc->representante->apellido,
-                    'cedula' => $acc->representante->cedula,
-                    'telefono' => $acc->representante->telefono,
-                    'niños' => $acc->participantes->pluck('nombre')->toArray(),
-                    'status' => 'Vigente'
-                ];
-            })->toArray()) !!},
+            registros: JSON.parse(document.getElementById('operadorPanelEl').dataset.registros),
             searchQuery: '',
             filterDate: '',
             scannerActive: false,

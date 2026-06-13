@@ -46,7 +46,7 @@ Route::get('/validar/{token}', [RegistroController::class, 'validarPase'])->name
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('staff-ninja')->group(function () {
+Route::prefix('staff-ninja')->middleware('audit')->group(function () {
     // Autenticación (Público dentro del prefijo)
     Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post')->middleware('throttle:5,1');

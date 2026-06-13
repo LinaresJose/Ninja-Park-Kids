@@ -22,3 +22,8 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Exclusiones de Auditoría y Seguridad
+/storage/app/backups/*
+/storage/app/public/firmas/*
+

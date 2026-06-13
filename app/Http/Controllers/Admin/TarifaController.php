@@ -93,6 +93,17 @@ class TarifaController extends Controller
      */
     public function updateHorarios(Request $request)
     {
+        $request->validate([
+            'horarios'                 => 'required|array',
+            'horarios.*.hora_apertura' => 'nullable|date_format:H:i',
+            'horarios.*.hora_cierre'   => 'nullable|date_format:H:i',
+        ], [
+            'horarios.required'                     => 'Debe enviar los horarios del parque.',
+            'horarios.array'                        => 'Los horarios enviados tienen un formato incorrecto.',
+            'horarios.*.hora_apertura.date_format' => 'La hora de apertura debe tener el formato HH:MM.',
+            'horarios.*.hora_cierre.date_format'   => 'La hora de cierre debe tener el formato HH:MM.',
+        ]);
+
         foreach ($request->input('horarios', []) as $id => $data) {
             HorarioParque::where('id', $id)->update([
                 'hora_apertura' => $data['hora_apertura'] ?? null,
