@@ -15,6 +15,11 @@ use App\Services\EstadisticasService;
 
 class DashboardController extends Controller
 {
+    // Constructor al inicio: buena práctica y requerido por el IoC de Laravel
+    public function __construct(
+        protected EstadisticasService $estadisticasService
+    ) {}
+
     public function index()
     {
         $user = Auth::user();
@@ -25,7 +30,6 @@ class DashboardController extends Controller
         }
 
         // Si es Admin o Gerente, mostramos el dashboard principal
-        // Métricas básicas para el admin
         $firmasHoy = AcuerdoFirmado::whereDate('fecha_firma', Carbon::today())->count();
         $totalClientes = Representante::count();
         $ultimosRegistros = AcuerdoFirmado::with('representante', 'participantes')
@@ -36,23 +40,8 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact('firmasHoy', 'totalClientes', 'ultimosRegistros'));
     }
 
-    public function operator()
-    {
-        // El operador solo necesita ver la lista de hoy y el botón de escaneo
-        $firmasHoy = AcuerdoFirmado::with(['representante', 'participantes'])
-                                   ->whereDate('fecha_firma', Carbon::today())
-                                   ->latest()
-                                   ->get();
-
-        return view('admin.operator', compact('firmasHoy'));
-    }
-
-    protected $estadisticasService;
-
-    public function __construct(EstadisticasService $estadisticasService)
-    {
-        $this->estadisticasService = $estadisticasService;
-    }
+    // Método operator() eliminado: su ruta apunta a OperadorController::index()
+    // y era código muerto que duplicaba lógica de forma divergente.
 
     public function estadisticas()
     {

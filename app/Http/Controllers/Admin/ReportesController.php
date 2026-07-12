@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportesController extends Controller
 {
@@ -128,8 +129,7 @@ class ReportesController extends Controller
         $fechaReporte = Carbon::now()->format('d/m/Y H:i:s');
         $usuario = Auth::user();
 
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('pdf.reporte_registros', compact(
+        $pdf = Pdf::loadView('pdf.reporte_registros', compact(
             'registros',
             'desde',
             'hasta',
@@ -250,8 +250,7 @@ class ReportesController extends Controller
             $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
         }
 
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('pdf.acuerdo_responsabilidad', compact(
+        $pdf = Pdf::loadView('pdf.acuerdo_responsabilidad', compact(
             'representante',
             'participantes',
             'firma',

@@ -67,6 +67,19 @@ class GuardarFirmaRequest extends FormRequest
                     'Un representante solo puede registrar un máximo de 15 niños.'
                 );
             }
+
+            // Validar que cada niño nuevo tenga apellido y fecha de nacimiento
+            $nombres = $this->input('nombres_niños', []);
+            if (is_array($nombres)) {
+                foreach ($nombres as $key => $nombre) {
+                    if (!$this->has("apellidos_niños.$key") || is_null($this->input("apellidos_niños.$key")) || trim($this->input("apellidos_niños.$key")) === '') {
+                        $validator->errors()->add("apellidos_niños.$key", "El apellido para el niño nuevo en la posición " . ($key + 1) . " es obligatorio.");
+                    }
+                    if (!$this->has("fechas_nacimiento_niños.$key") || is_null($this->input("fechas_nacimiento_niños.$key")) || trim($this->input("fechas_nacimiento_niños.$key")) === '') {
+                        $validator->errors()->add("fechas_nacimiento_niños.$key", "La fecha de nacimiento para el niño nuevo en la posición " . ($key + 1) . " es obligatoria.");
+                    }
+                }
+            }
         });
     }
 }

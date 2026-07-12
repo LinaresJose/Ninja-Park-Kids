@@ -31,7 +31,7 @@ class UserController extends Controller
             'apellido' => 'required|string|max:255',
             'cedula' => 'required|string|unique:usuarios,cedula',
             'correo' => 'required|string|email|max:255|unique:usuarios,correo',
-            'password' => 'required|string|min:4',
+            'password' => 'required|string|min:8', // NIST: mínimo 8 car. para sistemas con datos personales
             'rol_id' => 'required|exists:roles,id',
         ]);
 
@@ -81,7 +81,7 @@ class UserController extends Controller
             'cedula'   => 'required|string|unique:usuarios,cedula,' . $id,
             'correo'   => 'required|email|max:255|unique:usuarios,correo,' . $id,
             'rol_id'   => 'required|exists:roles,id',
-            'password' => 'nullable|string|min:4',
+            'password' => 'nullable|string|min:8', // NIST: mínimo 8 car. para sistemas con datos personales
         ], [
             'cedula.unique' => 'Esa cédula ya está registrada por otro usuario.',
             'correo.unique' => 'Ese correo ya está en uso por otro usuario.',

@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class AcuerdoFirmado extends Model
 {
     protected $table = 'acuerdos_firmados';
-    public $timestamps = false;
+    public $timestamps = true;
+    const CREATED_AT = 'fecha_firma';
+    const UPDATED_AT = null;
 
     protected $fillable = [
         'representante_id',

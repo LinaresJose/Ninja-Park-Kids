@@ -87,19 +87,22 @@ class OperadorController extends Controller
             return response()->json(['success' => false, 'message' => 'Código no encontrado'], 404);
         }
 
+        $vigente = Carbon::parse($acuerdo->fecha_firma)->isToday();
+
         return response()->json([
-            'success' => true,
+            'success'       => true,
             'representante' => $acuerdo->representante->nombre . ' ' . $acuerdo->representante->apellido,
-            'cedula' => $acuerdo->representante->cedula,
-            'telefono' => $acuerdo->representante->telefono,
-            'niños' => $acuerdo->participantes->map(function($p) {
+            'cedula'        => $acuerdo->representante->cedula,
+            'telefono'      => $acuerdo->representante->telefono,
+            'niños'         => $acuerdo->participantes->map(function($p) {
                 return [
                     'nombre' => $p->nombre . ' ' . $p->apellido,
-                    'edad' => Carbon::parse($p->fecha_nacimiento)->age
+                    'edad'   => Carbon::parse($p->fecha_nacimiento)->age
                 ];
             }),
-            'fecha_firma' => Carbon::parse($acuerdo->fecha_firma)->format('d/m/Y H:i'),
-            'status' => 'Vigente'
-        ]);
+            'fecha_firma'   => Carbon::parse($acuerdo->fecha_firma)->format('d/m/Y H:i'),
+            'vigente'       => $vigente,
+            'status'        => $vigente ? '✅ Vigente' : '🔴 Expirado — Pase de otro día',
+        ], $vigente ? 200 : 422);
     }
 }

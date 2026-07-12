@@ -79,10 +79,19 @@ class RegistroController extends Controller
             ])->withInput();
         }
 
-        // Crear representante
-        $representante = Representante::create($request->only([
-            'cedula', 'nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento',
-        ]));
+        // Crear representante con captura de excepción ante race condition
+        try {
+            $representante = Representante::create($request->only([
+                'cedula', 'nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento',
+            ]));
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->errorInfo[1] === 1062) {
+                return back()->withErrors([
+                    'cedula' => 'Este número de identificación ya se encuentra registrado por otro usuario.',
+                ])->withInput();
+            }
+            throw $e;
+        }
 
         // Construir array de niños nuevos con formato estándar
         $nuevosNiños = [];
@@ -94,7 +103,20 @@ class RegistroController extends Controller
             ];
         }
 
-        $acuerdo = $this->registroService->crearAcuerdo($representante, [], $nuevosNiños, $request->firma_base64);
+        try {
+            $acuerdo = $this->registroService->crearAcuerdo($representante, [], $nuevosNiños, $request->firma_base64);
+        } catch (\RuntimeException $e) {
+            // Error de negocio conocido (ej: sin términos activos)
+            return back()->withErrors(['error' => $e->getMessage()])->withInput();
+        } catch (\Throwable $e) {
+            \Log::error('Error al crear acuerdo (store): ' . $e->getMessage(), [
+                'representante_id' => $representante->id,
+                'trace'            => $e->getTraceAsString(),
+            ]);
+            return back()->withErrors([
+                'error' => 'Ocurrió un error inesperado al procesar el acuerdo. Por favor, intente nuevamente.',
+            ])->withInput();
+        }
 
         return redirect()->route('registro.pase', $acuerdo->id)
             ->with('success', '¡Acreditación exitosa! Bienvenid@ a Ninja Park.');
@@ -133,7 +155,19 @@ class RegistroController extends Controller
             ];
         }
 
-        $acuerdo = $this->registroService->crearAcuerdo($representante, $participantesIds, $nuevosNiños, $request->firma_base64);
+        try {
+            $acuerdo = $this->registroService->crearAcuerdo($representante, $participantesIds, $nuevosNiños, $request->firma_base64);
+        } catch (\RuntimeException $e) {
+            return back()->withErrors(['error' => $e->getMessage()])->withInput();
+        } catch (\Throwable $e) {
+            \Log::error('Error al guardar firma: ' . $e->getMessage(), [
+                'representante_id' => $representante->id,
+                'trace'            => $e->getTraceAsString(),
+            ]);
+            return back()->withErrors([
+                'error' => 'Ocurrió un error inesperado al guardar la firma. Por favor, intente nuevamente.',
+            ])->withInput();
+        }
 
         return redirect()->route('registro.pase', $acuerdo->id)
             ->with('success', '¡Acuerdo firmado y pase generado con éxito!');
@@ -157,7 +191,10 @@ class RegistroController extends Controller
         $url     = route('registro.validar', $acuerdo->token_qr);
 
         $qrCode   = QrCode::format('svg')->size(400)->margin(1)->color(123, 44, 191)->errorCorrection('H')->generate($url);
-        $filename = 'QR_' . strtoupper($acuerdo->representante->nombre) . '_' . strtoupper($acuerdo->representante->apellido) . '.svg';
+        $nombre   = \Illuminate\Support\Str::ascii($acuerdo->representante->nombre);
+        $apellido = \Illuminate\Support\Str::ascii($acuerdo->representante->apellido);
+        $filename = 'QR_' . strtoupper($nombre) . '_' . strtoupper($apellido) . '.svg';
+        $filename = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $filename); // Sanitizar caracteres no-ASCII
 
         return response($qrCode)
             ->header('Content-Type', 'image/svg+xml')

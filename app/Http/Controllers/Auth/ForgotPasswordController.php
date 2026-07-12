@@ -58,10 +58,21 @@ class ForgotPasswordController extends Controller
         $link = route('password.reset', ['token' => $token, 'correo' => $request->correo]);
 
         // Enviar el correo usando la plantilla HTML premium
-        Mail::send('emails.recuperar', ['link' => $link, 'nombre' => $usuario->nombre], function ($message) use ($request) {
-            $message->to($request->correo);
-            $message->subject('🔑 Restablecer acceso a Portal del Personal - Ninja Park');
-        });
+        try {
+            Mail::send('emails.recuperar', ['link' => $link, 'nombre' => $usuario->nombre], function ($message) use ($request) {
+                $message->to($request->correo);
+                $message->subject('🔑 Restablecer acceso a Portal del Personal - Ninja Park');
+            });
+        } catch (\Throwable $e) {
+            \Log::error('Fallo al enviar correo de recuperación: ' . $e->getMessage(), [
+                'correo' => $request->correo,
+            ]);
+            // Limpiar el token para que el usuario pueda reintentar
+            DB::table('password_reset_tokens')->where('correo', $request->correo)->delete();
+            return back()->withErrors([
+                'correo' => 'No pudimos enviar el correo de recuperación. Intente nuevamente en unos minutos.',
+            ]);
+        }
 
         return back()->with('success', '¡Enlace de recuperación enviado! Revisa tu bandeja de entrada corporativa y tu carpeta de spam.');
     }

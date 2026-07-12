@@ -21,7 +21,7 @@ class ChatbotController extends Controller
         'tarifas'        => ['tarifa', 'precio', 'costo', 'cuánto cuesta', 'cuanto cuesta', 'cobran', 'vale', 'cuánto es', 'cuanto es'],
         'horarios'       => ['horario', 'hora', 'abierto', 'abren', 'cierran', 'cuándo', 'cuando'],
         'promociones'    => ['promo', 'promocion', 'promoción', 'descuento', 'oferta', 'especial', 'rebaja'],
-        'redes_sociales' => ['instagram', ' ig', 'redes', 'facebook', 'social', 'ninjapark', 'seguir'],
+        'redes_sociales' => ['instagram', 'ig', 'redes', 'facebook', 'social', 'ninjapark', 'seguir'],
         'reservas'       => ['reservar', 'reserva', 'cumpleaños', 'cumpleanos', 'cumple', 'evento', 'fiesta', 'party'],
     ];
 
@@ -63,7 +63,15 @@ class ChatbotController extends Controller
         if (strlen($cedula) < 6) {
             return response()->json(['status' => 'error', 'message' => 'Por favor, ingresa una cédula válida (mínimo 6 dígitos).']);
         }
+        return $this->resolverCedula($cedula);
+    }
 
+    /**
+     * Lógica de búsqueda de cédula extraida como método privado puro
+     * para evitar el anti-patrón de new Request() y mejorar la testeabilidad.
+     */
+    private function resolverCedula(string $cedula): \Illuminate\Http\JsonResponse
+    {
         $rep = Representante::where('cedula', $cedula)->first();
 
         if ($rep) {
@@ -92,8 +100,9 @@ class ChatbotController extends Controller
             ]);
         }
 
+        // Detectar cédula en el mensaje y resolverla sin crear un Request sintético
         if ($cedula = $this->containsCedula($message)) {
-            return $this->verificarCedula(new Request(['cedula' => $cedula]));
+            return $this->resolverCedula($cedula);
         }
 
         return match ($this->detectIntent($message, $this->publicIntents)) {

@@ -76,4 +76,26 @@ class StoreRegistroRequest extends FormRequest
             'firma_base64.string'                => 'La firma digital enviada no tiene un formato válido.',
         ];
     }
+
+    /**
+     * Validación personalizada para garantizar integridad y concordancia de índices de niños.
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $nombres = $this->input('nombres_niños', []);
+            if (!is_array($nombres)) {
+                return;
+            }
+
+            foreach ($nombres as $key => $nombre) {
+                if (!$this->has("apellidos_niños.$key") || is_null($this->input("apellidos_niños.$key")) || trim($this->input("apellidos_niños.$key")) === '') {
+                    $validator->errors()->add("apellidos_niños.$key", "El apellido para el niño en la posición " . ($key + 1) . " es obligatorio.");
+                }
+                if (!$this->has("fechas_nacimiento_niños.$key") || is_null($this->input("fechas_nacimiento_niños.$key")) || trim($this->input("fechas_nacimiento_niños.$key")) === '') {
+                    $validator->errors()->add("fechas_nacimiento_niños.$key", "La fecha de nacimiento para el niño en la posición " . ($key + 1) . " es obligatoria.");
+                }
+            }
+        });
+    }
 }

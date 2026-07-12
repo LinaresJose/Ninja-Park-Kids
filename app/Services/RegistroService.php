@@ -32,31 +32,64 @@ class RegistroService
     ): AcuerdoFirmado {
         return DB::transaction(function () use ($representante, $participantesIds, $nuevosNiños, $firmaBase64) {
 
-            // 1. Crear niños nuevos si los hay y recopilar sus IDs
+            // Evitar duplicar el acuerdo si ya se procesó uno hoy (por doble click o envío simultáneo)
+            $acuerdoExistente = AcuerdoFirmado::where('representante_id', $representante->id)
+                ->whereDate('fecha_firma', \Carbon\Carbon::today())
+                ->first();
+
+            if ($acuerdoExistente) {
+                return $acuerdoExistente;
+            }
+
+            // 1. Crear niños nuevos si los hay (reusando existentes si coinciden exactamente para evitar duplicados en la BD) y recopilar sus IDs
             foreach ($nuevosNiños as $niño) {
-                $creado = Participante::create([
-                    'representante_id' => $representante->id,
-                    'nombre'           => $niño['nombre'],
-                    'apellido'         => $niño['apellido'],
-                    'fecha_nacimiento' => $niño['fecha_nacimiento'],
-                ]);
-                $participantesIds[] = $creado->id;
+                $existente = Participante::where('representante_id', $representante->id)
+                    ->where('nombre', $niño['nombre'])
+                    ->where('apellido', $niño['apellido'])
+                    ->where('fecha_nacimiento', $niño['fecha_nacimiento'])
+                    ->first();
+
+                if ($existente) {
+                    $participantesIds[] = $existente->id;
+                } else {
+                    $creado = Participante::create([
+                        'representante_id' => $representante->id,
+                        'nombre'           => $niño['nombre'],
+                        'apellido'         => $niño['apellido'],
+                        'fecha_nacimiento' => $niño['fecha_nacimiento'],
+                    ]);
+                    $participantesIds[] = $creado->id;
+                }
             }
 
             // 2. Obtener la versión activa de Términos y Condiciones
-            $termino = TerminoCondicion::where('activo', true)->firstOrFail();
+            $termino = TerminoCondicion::where('activo', true)->first();
+
+            if (!$termino) {
+                throw new \RuntimeException(
+                    'No hay versión de Términos y Condiciones activa. '
+                    . 'Un administrador debe activar una versión desde el panel legal antes de continuar.'
+                );
+            }
 
             // 3. Decodificar y guardar la firma digital en disco (si es un base64 nuevo)
             $firmaGuardada = $firmaBase64;
             if (str_starts_with($firmaBase64, 'data:image/')) {
-                $image = str_replace([
-                    'data:image/png;base64,',
-                    'data:image/jpeg;base64,',
-                    'data:image/jpg;base64,',
-                ], '', $firmaBase64);
-                $image = str_replace(' ', '+', $image);
-                $firmaFileName = 'firmas/firma_' . uniqid() . '_' . time() . '.png';
-                Storage::disk('public')->put($firmaFileName, base64_decode($image));
+                // Extraer el tipo MIME y la data Base64 de forma genérica (soporta png, jpeg, webp, etc.)
+                if (!preg_match('/^data:image\/(\w+);base64,(.+)$/s', $firmaBase64, $parts)) {
+                    throw new \InvalidArgumentException('La firma digital tiene un formato Base64 inválido.');
+                }
+
+                $imageData = base64_decode($parts[2], true); // strict: rechaza Base64 mal formado
+
+                if ($imageData === false) {
+                    throw new \InvalidArgumentException('No se pudo decodificar la firma digital. El Base64 está corrupto.');
+                }
+
+                // Normalizar extensión: webp/jpeg -> png para consistencia en disco
+                $extension     = in_array($parts[1], ['jpeg', 'jpg', 'webp']) ? 'png' : $parts[1];
+                $firmaFileName = 'firmas/firma_' . Str::uuid() . '.' . $extension;
+                Storage::disk('public')->put($firmaFileName, $imageData);
                 $firmaGuardada = $firmaFileName;
             }
 
@@ -69,8 +102,8 @@ class RegistroService
                 'firma_base64'     => $firmaGuardada,
             ]);
 
-            // 5. Vincular los participantes a este acuerdo
-            $acuerdo->participantes()->sync($participantesIds);
+            // 5. Vincular los participantes a este acuerdo (eliminando duplicados del array de IDs)
+            $acuerdo->participantes()->sync(array_unique($participantesIds));
 
             return $acuerdo;
         });
