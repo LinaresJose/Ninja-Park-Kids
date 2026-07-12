@@ -111,6 +111,16 @@
 
         <!-- MAIN PAGE CONTENT -->
         <div class="p-4" style="flex-grow: 1;">
+            @if ($errors->any())
+                <div class="alert alert-danger shadow-sm mb-4" style="border-radius: 12px; border-left: 5px solid #EF4444; background: rgba(255,255,255,0.95); color: #7F1D1D;">
+                    <i class="bi bi-exclamation-triangle-fill me-2" style="color: #EF4444;"></i> <strong>Existen errores en el formulario:</strong>
+                    <ul class="mb-0 mt-2">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             @yield('content')
         </div>
     </main>

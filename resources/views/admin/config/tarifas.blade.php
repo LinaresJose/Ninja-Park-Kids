@@ -10,16 +10,6 @@
         </div>
     @endif
 
-    @if($errors->any())
-        <div class="alert alert-danger mb-4">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Por favor, corrija los siguientes errores:</strong>
-            <ul class="mb-0 mt-2">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <div class="row">
         <!-- SECCIÓN TARIFAS -->
