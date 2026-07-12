@@ -67,7 +67,7 @@ class OperadorController extends Controller
                 'cedula' => $acc->representante->cedula,
                 'telefono' => $acc->representante->telefono,
                 'niños' => $acc->participantes->pluck('nombre')->toArray(),
-                'status' => 'Vigente' // Aquí podrías añadir lógica de expiración real
+                'status'        => Carbon::parse($acc->fecha_firma)->isToday() ? '✅ Vigente' : '🔴 Expirado'
             ];
         });
 
