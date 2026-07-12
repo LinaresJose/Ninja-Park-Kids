@@ -95,13 +95,13 @@ class TarifaController extends Controller
     {
         $request->validate([
             'horarios'                 => 'required|array',
-            'horarios.*.hora_apertura' => 'nullable|date_format:H:i',
-            'horarios.*.hora_cierre'   => 'nullable|date_format:H:i|after:horarios.*.hora_apertura',
+            'horarios.*.hora_apertura' => 'nullable|date_format:H:i,H:i:s',
+            'horarios.*.hora_cierre'   => 'nullable|date_format:H:i,H:i:s|after:horarios.*.hora_apertura',
         ], [
             'horarios.required'                    => 'Debe enviar los horarios del parque.',
             'horarios.array'                       => 'Los horarios enviados tienen un formato incorrecto.',
-            'horarios.*.hora_apertura.date_format' => 'La hora de apertura debe tener el formato HH:MM.',
-            'horarios.*.hora_cierre.date_format'   => 'La hora de cierre debe tener el formato HH:MM.',
+            'horarios.*.hora_apertura.date_format' => 'La hora de apertura debe tener el formato HH:MM o HH:MM:SS.',
+            'horarios.*.hora_cierre.date_format'   => 'La hora de cierre debe tener el formato HH:MM o HH:MM:SS.',
             'horarios.*.hora_cierre.after'         => 'La hora de cierre debe ser posterior a la hora de apertura.',
         ]);
 

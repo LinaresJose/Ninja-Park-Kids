@@ -10,6 +10,17 @@
         </div>
     @endif
 
+    @if($errors->any())
+        <div class="alert alert-danger mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Por favor, corrija los siguientes errores:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="row">
         <!-- SECCIÓN TARIFAS -->
         <div class="col-md-6">
@@ -131,13 +142,13 @@
                         <input type="time" name="horarios[{{ $horario->id }}][hora_apertura]"
                             class="form-control form-control-sm flex-grow-1"
                             style="min-width: 115px;"
-                            value="{{ $horario->hora_apertura }}">
+                            value="{{ $horario->hora_apertura ? substr($horario->hora_apertura, 0, 5) : '' }}">
 
                         {{-- Input Hora Cierre --}}
                         <input type="time" name="horarios[{{ $horario->id }}][hora_cierre]"
                             class="form-control form-control-sm flex-grow-1"
                             style="min-width: 115px;"
-                            value="{{ $horario->hora_cierre }}">
+                            value="{{ $horario->hora_cierre ? substr($horario->hora_cierre, 0, 5) : '' }}">
 
                         {{-- Toggle Cerrado --}}
                         <div class="form-check form-switch mb-0 text-nowrap ps-4 ms-3" style="min-width: 85px;">
