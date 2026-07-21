@@ -281,15 +281,30 @@
             signaturePad.clear();
         });
 
-        // Interceptar el envío del formulario
+        // Interceptar el envío del formulario con prevención de doble submit
         const form = document.querySelector('form');
+        let formEnviado = false;
+
         form.addEventListener('submit', function(e) {
             if (signaturePad.isEmpty()) {
                 e.preventDefault();
                 alert('Por favor, dibuje su firma en el recuadro antes de continuar.');
-            } else {
-                // Generar Base64 y guardarla en el input hidden
-                document.getElementById('firma_base64').value = signaturePad.toDataURL();
+                return;
+            }
+
+            if (formEnviado) {
+                e.preventDefault();
+                return;
+            }
+
+            formEnviado = true;
+            document.getElementById('firma_base64').value = signaturePad.toDataURL();
+
+            // Deshabilitar botón de envío para evitar peticiones duplicadas
+            const btnSubmit = form.querySelector('button[type="submit"]');
+            if (btnSubmit) {
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> PROCESANDO PASE...';
             }
         });
     });

@@ -79,18 +79,20 @@ class RegistroController extends Controller
             ])->withInput();
         }
 
-        // Crear representante con captura de excepción ante race condition
+        // Crear o recuperar representante de forma idempotente (evitando race conditions o conflictos 409)
         try {
-            $representante = Representante::create($request->only([
-                'cedula', 'nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento',
-            ]));
-        } catch (\Illuminate\Database\QueryException $e) {
-            if ($e->errorInfo[1] === 1062) {
-                return back()->withErrors([
-                    'cedula' => 'Este número de identificación ya se encuentra registrado por otro usuario.',
-                ])->withInput();
-            }
-            throw $e;
+            $representante = Representante::firstOrCreate(
+                ['cedula' => $request->cedula],
+                $request->only(['nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento'])
+            );
+
+            // Si ya existía, actualizar datos de contacto
+            $representante->update($request->only(['nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento']));
+        } catch (\Throwable $e) {
+            \Log::error('Error al procesar representante en store: ' . $e->getMessage());
+            return back()->withErrors([
+                'error' => 'Ocurrió un error al guardar los datos del representante. Por favor reintente.',
+            ])->withInput();
         }
 
         // Construir array de niños nuevos con formato estándar

@@ -20,7 +20,7 @@ class StoreRegistroRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cedula'                     => 'required|numeric|digits_between:7,8|unique:representantes,cedula',
+            'cedula'                     => 'required|numeric|digits_between:7,8',
             'nombre'                     => 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
             'apellido'                   => 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
             'parentesco'                 => 'required|in:Padre,Madre,Representante Legal',
