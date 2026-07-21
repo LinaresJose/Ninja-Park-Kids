@@ -149,6 +149,10 @@ class ForgotPasswordController extends Controller
         // Borrar el token para que no se pueda reutilizar
         DB::table('password_reset_tokens')->where('correo', $request->correo)->delete();
 
+        // Invalidar la sesión actual y regenerar token CSRF para prevenir error 419 en el login
+        $request->session()->flush();
+        $request->session()->regenerate();
+
         return redirect()->route('login')->with('success', 'Contraseña restablecida con éxito. Ya puedes ingresar al Portal del Personal.');
     }
 }
