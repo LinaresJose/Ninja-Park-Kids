@@ -114,10 +114,10 @@ class ForgotPasswordController extends Controller
         $request->validate([
             'token' => 'required',
             'correo' => 'required|email|exists:usuarios,correo',
-            'password' => 'required|string|min:4|confirmed',
+            'password' => 'required|string|min:8|confirmed',
         ], [
             'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 4 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 

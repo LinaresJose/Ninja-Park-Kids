@@ -41,7 +41,7 @@
                     <label for="password" class="form-label" style="font-weight: 700; color: var(--ninja-purple);">Nueva Contraseña</label>
                     <div class="input-group">
                         <span class="input-group-text" style="background: white; border-right: none; border-radius: 12px 0 0 12px;"><i class="bi bi-key-fill text-muted"></i></span>
-                        <input type="password" name="password" id="password" class="form-control" style="border-left: none; border-radius: 0 12px 12px 0;" placeholder="Mínimo 4 caracteres" required autofocus>
+                        <input type="password" name="password" id="password" class="form-control" style="border-left: none; border-radius: 0 12px 12px 0;" placeholder="Mínimo 8 caracteres" required autofocus minlength="8">
                     </div>
                 </div>
 
