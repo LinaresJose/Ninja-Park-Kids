@@ -385,7 +385,19 @@
         if (t) t.remove();
     }
 
+    const DEFAULT_PUBLIC_REPLIES = ['Ver Tarifas', 'Ver Horarios', 'Promociones', 'Reservar', 'Redes Sociales'];
+    const DEFAULT_STAFF_REPLIES = ['Afluencia hoy', 'Afluencia esta semana', 'Horas pico', 'Buscar cliente'];
+
     function setQuick(replies) {
+        if (awaitingCedula) {
+            quick.innerHTML = '';
+            return;
+        }
+
+        if (!replies || replies.length === 0) {
+            replies = MODO === 'staff' ? DEFAULT_STAFF_REPLIES : DEFAULT_PUBLIC_REPLIES;
+        }
+
         quick.innerHTML = '';
         replies.forEach(r => {
             const btn = document.createElement('button');
