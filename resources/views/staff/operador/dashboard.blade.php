@@ -225,7 +225,7 @@
 
             refocusScanner() {
                 if (!this.modalVisible && !this.scannerActive) {
-                    this.$refs.hidInput.focus();
+                    this.$refs.hidInput.focus({ preventScroll: true });
                 }
             },
 
