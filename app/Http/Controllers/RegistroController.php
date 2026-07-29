@@ -11,6 +11,7 @@ use App\Models\AcuerdoFirmado;
 use App\Models\TerminoCondicion;
 use Carbon\Carbon;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\DB;
 
 class RegistroController extends Controller
 {
@@ -79,8 +80,10 @@ class RegistroController extends Controller
             ])->withInput();
         }
 
-        // Crear o recuperar representante de forma idempotente (evitando race conditions o conflictos 409)
+        // Crear o recuperar representante de forma idempotente y atómica
         try {
+            DB::beginTransaction();
+
             $representante = Representante::firstOrCreate(
                 ['cedula' => $request->cedula],
                 $request->only(['nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento'])
@@ -88,35 +91,31 @@ class RegistroController extends Controller
 
             // Si ya existía, actualizar datos de contacto
             $representante->update($request->only(['nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento']));
-        } catch (\Throwable $e) {
-            \Log::error('Error al procesar representante en store: ' . $e->getMessage());
-            return back()->withErrors([
-                'error' => 'Ocurrió un error al guardar los datos del representante. Por favor reintente.',
-            ])->withInput();
-        }
 
-        // Construir array de niños nuevos con formato estándar
-        $nuevosNiños = [];
-        foreach ($request->input('nombres_niños', []) as $key => $nombre) {
-            $nuevosNiños[] = [
-                'nombre'           => $nombre,
-                'apellido'         => $request->input("apellidos_niños.$key"),
-                'fecha_nacimiento' => $request->input("fechas_nacimiento_niños.$key"),
-            ];
-        }
+            // Construir array de niños nuevos con formato estándar
+            $nuevosNiños = [];
+            foreach ($request->input('nombres_niños', []) as $key => $nombre) {
+                $nuevosNiños[] = [
+                    'nombre'           => $nombre,
+                    'apellido'         => $request->input("apellidos_niños.$key"),
+                    'fecha_nacimiento' => $request->input("fechas_nacimiento_niños.$key"),
+                ];
+            }
 
-        try {
             $acuerdo = $this->registroService->crearAcuerdo($representante, [], $nuevosNiños, $request->firma_base64);
+
+            DB::commit();
         } catch (\RuntimeException $e) {
+            DB::rollBack();
             // Error de negocio conocido (ej: sin términos activos)
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
         } catch (\Throwable $e) {
+            DB::rollBack();
             \Log::error('Error al crear acuerdo (store): ' . $e->getMessage(), [
-                'representante_id' => $representante->id,
-                'trace'            => $e->getTraceAsString(),
+                'trace' => $e->getTraceAsString(),
             ]);
             return back()->withErrors([
-                'error' => 'Ocurrió un error inesperado al procesar el acuerdo. Por favor, intente nuevamente.',
+                'error' => 'Ocurrió un error inesperado al procesar el registro. Por favor, intente nuevamente.',
             ])->withInput();
         }
 
