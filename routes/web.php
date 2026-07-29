@@ -49,7 +49,7 @@ Route::get('/validar/{token}', [RegistroController::class, 'validarPase'])->name
 Route::prefix('staff-ninja')->middleware('audit')->group(function () {
     // Autenticación (Público dentro del prefijo)
     Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // --- RECUPERACIÓN DE CONTRASEÑA (Públicas dentro del prefijo) ---
@@ -61,7 +61,7 @@ Route::prefix('staff-ninja')->middleware('audit')->group(function () {
     // Rutas Protegidas por AUTH y ROLES (Nivel Operador Integral)
     Route::middleware(['auth', 'role:operador'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-        
+
         // --- PANEL DE OPERADOR (CONTROL DE PUERTA) ---
         Route::get('/operador', [App\Http\Controllers\Staff\OperadorController::class, 'index'])->name('operador.dashboard');
         Route::get('/api/operador/buscar', [App\Http\Controllers\Staff\OperadorController::class, 'buscar'])->name('operador.buscar');
@@ -119,8 +119,8 @@ Route::prefix('api/bot')->group(function () {
 
 // --- MALOCHY CHATBOT (Publico) ---
 Route::prefix('api/malochy')->middleware('throttle:60,1')->group(function () {
-    Route::post('/chat',     [App\Http\Controllers\Api\ChatbotController::class, 'chat'])->name('malochy.chat');
-    Route::post('/verificar',[App\Http\Controllers\Api\ChatbotController::class, 'verificarCedula'])->name('malochy.verificar');
+    Route::post('/chat', [App\Http\Controllers\Api\ChatbotController::class, 'chat'])->name('malochy.chat');
+    Route::post('/verificar', [App\Http\Controllers\Api\ChatbotController::class, 'verificarCedula'])->name('malochy.verificar');
 });
 
 // --- MALOCHY CHATBOT (Staff) ---

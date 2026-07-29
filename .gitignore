@@ -26,4 +26,5 @@ Thumbs.db
 # Exclusiones de Auditoría y Seguridad
 /storage/app/backups/*
 /storage/app/public/firmas/*
+/storage/framework/sessions/*
 
