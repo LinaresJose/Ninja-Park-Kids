@@ -70,3 +70,16 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Auto-renovar token CSRF cada 10 minutos para evitar error 419 en el login
+    setInterval(() => {
+        fetch('/csrf-token-refresh', { method: 'GET', credentials: 'same-origin' })
+            .then(r => r.json())
+            .then(data => {
+                document.querySelectorAll('input[name="_token"]').forEach(el => el.value = data.token);
+            }).catch(() => {});
+    }, 10 * 60 * 1000);
+</script>
+@endpush

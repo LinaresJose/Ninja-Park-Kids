@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// Endpoint para renovar el token CSRF en silencio (evita error 419 en formularios abiertos por mucho tiempo)
+Route::get('/csrf-token-refresh', function () {
+    return response()->json(['token' => csrf_token()]);
+})->name('csrf.refresh');
+
 // 1. Pantalla Inicial: Donde el representante ingresa solo la cÃ©dula
 Route::get('/', [RegistroController::class, 'verificarIndex'])->name('registro.verificar');
 

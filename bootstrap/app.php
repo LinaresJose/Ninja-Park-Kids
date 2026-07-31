@@ -22,6 +22,14 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SessionTimeout::class,
         ]);
 
+        // Excluir rutas públicas del CSRF para evitar el error 419 definitivamente
+        $middleware->validateCsrfTokens(except: [
+            '/consultar',               // Pantalla del cliente (cédula)
+            '/registro/guardar',        // Guardar nuevo registro cliente
+            '/registro/firma/*',        // Firma cliente recurrente
+            'api/malochy/*',            // Chatbot público
+        ]);
+
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
