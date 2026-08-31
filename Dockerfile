@@ -24,6 +24,13 @@ COPY . .
 # Instalar las librerías de PHP
 RUN composer install --no-dev --optimize-autoloader
 
+# Crear las carpetas internas que Laravel necesita
+RUN mkdir -p storage/framework/sessions \
+             storage/framework/views \
+             storage/framework/cache/data \
+             storage/logs \
+             bootstrap/cache
+
 # Dar permisos a las carpetas de Laravel
 RUN chmod -R 777 storage bootstrap/cache
 
