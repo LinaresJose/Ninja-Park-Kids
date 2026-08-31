@@ -134,12 +134,3 @@ Route::prefix('staff-ninja/api/malochy')->middleware(['auth', 'role:operador'])-
 });
 
 
-Route::get('/setup-db-cloud', function () {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-        return '¡Base de datos migrada y configurada con éxito en la nube!';
-    } catch (\Throwable $e) {
-        return 'Error exacto: ' . $e->getMessage() . ' en ' . $e->getFile() . ':' . $e->getLine();
-    }
-});
