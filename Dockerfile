@@ -1,6 +1,6 @@
 FROM php:8.3-cli
 
-# Instalar dependencias del sistema requeridas por Laravel
+# Instalar dependencias del sistema requeridas por Laravel + Node.js para compilar los assets
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
+    curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql gd pcntl zip
 
@@ -23,6 +26,9 @@ COPY . .
 
 # Instalar las librerías de PHP
 RUN composer install --no-dev --optimize-autoloader
+
+# Compilar los assets de CSS y JS con Vite/Node
+RUN npm install && npm run build
 
 # Crear las carpetas internas que Laravel necesita
 RUN mkdir -p storage/framework/sessions \
