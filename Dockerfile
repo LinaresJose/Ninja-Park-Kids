@@ -40,5 +40,5 @@ RUN mkdir -p storage/framework/sessions \
 # Dar permisos a las carpetas de Laravel
 RUN chmod -R 777 storage bootstrap/cache
 
-# Comando para iniciar el sistema usando el puerto que Render asigne
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+# Comando para ejecutar migraciones pendientes e iniciar el sistema
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}

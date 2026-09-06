@@ -17,6 +17,21 @@ Route::get('/csrf-token-refresh', function () {
     return response()->json(['token' => csrf_token()]);
 })->name('csrf.refresh');
 
+// Endpoint de ejecución rápida de migraciones en la nube
+Route::get('/run-cloud-migrations', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        return response()->json([
+            'status' => 'success',
+            'message' => '¡Migraciones ejecutadas y base de datos en TiDB Cloud actualizada!',
+            'output' => \Illuminate\Support\Facades\Artisan::output()
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+    }
+})->middleware('throttle:3,1');
+
 // 1. Pantalla Inicial: Donde el representante ingresa solo la cÃ©dula
 Route::get('/', [RegistroController::class, 'verificarIndex'])->name('registro.verificar');
 
