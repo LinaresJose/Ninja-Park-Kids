@@ -122,15 +122,15 @@ Route::prefix('api/bot')->group(function () {
     Route::get('/horarios', [App\Http\Controllers\Api\BotController::class, 'horarios']);
 });
 
-// --- MALOCHY CHATBOT (Publico) ---
-Route::prefix('api/malochy')->middleware('throttle:60,1')->group(function () {
-    Route::post('/chat', [App\Http\Controllers\Api\ChatbotController::class, 'chat'])->name('malochy.chat');
-    Route::post('/verificar', [App\Http\Controllers\Api\ChatbotController::class, 'verificarCedula'])->name('malochy.verificar');
+// --- MALOSHY CHATBOT (Publico) ---
+Route::prefix('api/maloshy')->middleware('throttle:60,1')->group(function () {
+    Route::post('/chat', [App\Http\Controllers\Api\ChatbotController::class, 'chat'])->name('maloshy.chat');
+    Route::post('/verificar', [App\Http\Controllers\Api\ChatbotController::class, 'verificarCedula'])->name('maloshy.verificar');
 });
 
-// --- MALOCHY CHATBOT (Staff) ---
-Route::prefix('staff-ninja/api/malochy')->middleware(['auth', 'role:operador'])->group(function () {
-    Route::post('/staff', [App\Http\Controllers\Api\ChatbotController::class, 'chatStaff'])->name('malochy.staff.chat');
+// --- MALOSHY CHATBOT (Staff) ---
+Route::prefix('staff-ninja/api/maloshy')->middleware(['auth', 'role:operador'])->group(function () {
+    Route::post('/staff', [App\Http\Controllers\Api\ChatbotController::class, 'chatStaff'])->name('maloshy.staff.chat');
 });
 
 

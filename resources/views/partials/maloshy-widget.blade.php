@@ -1,10 +1,10 @@
 {{-- ╔══════════════════════════════════════════════════════════╗ --}}
-{{-- ║  MALOCHY CHATBOT WIDGET — Ninja Park Kids              ║ --}}
+{{-- ║  MALOSHY CHATBOT WIDGET — Ninja Park Kids              ║ --}}
 {{-- ║  Modo: public | staff (pasado desde el layout)         ║ --}}
 {{-- ╚══════════════════════════════════════════════════════════╝ --}}
 @php
     $isStaff     = isset($modo) && $modo === 'staff';
-    $chatEndpoint = $isStaff ? route('malochy.staff.chat') : route('malochy.chat');
+    $chatEndpoint = $isStaff ? route('maloshy.staff.chat') : route('maloshy.chat');
     $staffName   = $isStaff && Auth::check() ? Auth::user()->nombre : '';
 @endphp
 
@@ -23,10 +23,10 @@
     --mal-radius:      20px;
 }
 
-#malochy-widget { position: fixed; bottom: 28px; right: 28px; z-index: 9999; font-family: 'Segoe UI', system-ui, sans-serif; }
+#maloshy-widget { position: fixed; bottom: 28px; right: 28px; z-index: 9999; font-family: 'Segoe UI', system-ui, sans-serif; }
 
 /* ── BURBUJA FLOTANTE ─────────────────────────────────────── */
-#malochy-bubble {
+#maloshy-bubble {
     width: 72px; height: 72px;
     background: rgba(22, 163, 74, 0.18);
     border-radius: 50%; border: none; cursor: pointer;
@@ -39,15 +39,15 @@
     backdrop-filter: blur(4px);
     box-shadow: 0 4px 20px rgba(22,163,74,0.25);
 }
-#malochy-bubble:hover { transform: scale(1.08); }
-#malochy-bubble.open  { animation: none; transform: scale(1.05); }
+#maloshy-bubble:hover { transform: scale(1.08); }
+#maloshy-bubble.open  { animation: none; transform: scale(1.05); }
 
 @keyframes mal-pulse {
     0%,100% { box-shadow: 0 4px 20px rgba(22,163,74,0.25); }
     50%      { box-shadow: 0 4px 28px rgba(22,163,74,0.45), 0 0 0 8px rgba(22,163,74,0.08); }
 }
 
-#malochy-badge {
+#maloshy-badge {
     position: absolute; top: -2px; right: -2px;
     background: #ef4444; color: #fff; border-radius: 50%;
     width: 22px; height: 22px; font-size: 11px; font-weight: 700;
@@ -58,7 +58,7 @@
 @keyframes mal-bounce { from { transform: scale(1); } to { transform: scale(1.2); } }
 
 /* ── PANEL DE CHAT ────────────────────────────────────────── */
-#malochy-panel {
+#maloshy-panel {
     position: absolute; bottom: 80px; right: 0;
     width: 370px; max-height: 560px;
     background: #fff; border-radius: var(--mal-radius);
@@ -69,7 +69,7 @@
     opacity: 0; pointer-events: none;
     transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease;
 }
-#malochy-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+#maloshy-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
 
 /* ── HEADER ───────────────────────────────────────────────── */
 .mal-header {
@@ -100,15 +100,15 @@
 .mal-close-btn:hover { background: rgba(255,255,255,0.3); }
 
 /* ── MENSAJES ─────────────────────────────────────────────── */
-#malochy-messages {
+#maloshy-messages {
     flex: 1; overflow-y: auto; padding: 16px 14px;
     display: flex; flex-direction: column; gap: 10px;
     background: #fafafa;
     scrollbar-width: thin; scrollbar-color: #d1fae5 transparent;
 }
-#malochy-messages::-webkit-scrollbar { width: 4px; }
-#malochy-messages::-webkit-scrollbar-track { background: transparent; }
-#malochy-messages::-webkit-scrollbar-thumb { background: #bbf7d0; border-radius: 4px; }
+#maloshy-messages::-webkit-scrollbar { width: 4px; }
+#maloshy-messages::-webkit-scrollbar-track { background: transparent; }
+#maloshy-messages::-webkit-scrollbar-thumb { background: #bbf7d0; border-radius: 4px; }
 
 .mal-msg { display: flex; gap: 8px; animation: mal-fadeup 0.3s ease; }
 @keyframes mal-fadeup { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: none; } }
@@ -154,7 +154,7 @@
 @keyframes mal-type { 0%,80%,100%{transform:scale(0.6);opacity:0.4;} 40%{transform:scale(1);opacity:1;} }
 
 /* ── QUICK REPLIES ────────────────────────────────────────── */
-#malochy-quick {
+#maloshy-quick {
     padding: 8px 14px; display: flex; flex-wrap: wrap; gap: 6px;
     border-top: 1px solid #f0fdf4; background: #fafafa; flex-shrink: 0;
 }
@@ -171,47 +171,47 @@
     padding: 12px 14px; display: flex; gap: 8px; align-items: center;
     border-top: 1px solid #e2e8f0; background: #fff; flex-shrink: 0;
 }
-#malochy-input {
+#maloshy-input {
     flex: 1; border: 1.5px solid #e2e8f0; border-radius: 12px;
     padding: 9px 14px; font-size: 13.5px; outline: none;
     transition: border-color 0.2s;
 }
-#malochy-input:focus { border-color: var(--mal-green); }
-#malochy-send {
+#maloshy-input:focus { border-color: var(--mal-green); }
+#maloshy-send {
     width: 38px; height: 38px; border-radius: 50%; border: none;
     background: linear-gradient(135deg, var(--mal-green-dark), var(--mal-green));
     color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
     transition: transform 0.2s, opacity 0.2s; flex-shrink: 0;
 }
-#malochy-send:hover { transform: scale(1.1); }
-#malochy-send:active { transform: scale(0.95); }
-#malochy-send svg { width: 16px; height: 16px; }
+#maloshy-send:hover { transform: scale(1.1); }
+#maloshy-send:active { transform: scale(0.95); }
+#maloshy-send svg { width: 16px; height: 16px; }
 
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 480px) {
-    #malochy-widget { bottom: 16px; right: 16px; }
-    #malochy-panel  { width: calc(100vw - 32px); right: -16px; max-height: 480px; }
+    #maloshy-widget { bottom: 16px; right: 16px; }
+    #maloshy-panel  { width: calc(100vw - 32px); right: -16px; max-height: 480px; }
 }
 </style>
 
-<div id="malochy-widget">
+<div id="maloshy-widget">
 
     {{-- BURBUJA ──────────────────────────────────────────── --}}
-    <button id="malochy-bubble" onclick="malochyToggle()" aria-label="Abrir chat con Malochy" title="Malochy — Asistente Ninja">
-        <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy" style="width:95px;height:110px;object-fit:contain;display:block;position:relative;z-index:1;">
-        <span id="malochy-badge">1</span>
+    <button id="maloshy-bubble" onclick="maloshyToggle()" aria-label="Abrir chat con Maloshy" title="Maloshy — Asistente Ninja">
+        <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Maloshy" style="width:95px;height:110px;object-fit:contain;display:block;position:relative;z-index:1;">
+        <span id="maloshy-badge">1</span>
     </button>
 
     {{-- PANEL ────────────────────────────────────────────── --}}
-    <div id="malochy-panel" role="dialog" aria-label="Chat con Malochy">
+    <div id="maloshy-panel" role="dialog" aria-label="Chat con Maloshy">
 
         {{-- Header --}}
         <div class="mal-header">
             <div class="mal-avatar-wrap">
-                <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy" style="width:46px;height:auto;object-fit:contain;display:block;">
+                <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Maloshy" style="width:46px;height:auto;object-fit:contain;display:block;">
             </div>
             <div class="mal-header-info">
-                <div class="mal-header-name">Malochy 🥷</div>
+                <div class="mal-header-name">Maloshy 🥷</div>
                 <div class="mal-header-status">
                     <div class="mal-header-dot"></div>
                     <span>En línea · Asistente Ninja</span>
@@ -220,20 +220,20 @@
             @if($isStaff)
                 <div class="mal-mode-badge">🔐 STAFF</div>
             @endif
-            <button class="mal-close-btn" onclick="malochyToggle()" aria-label="Cerrar chat">✕</button>
+            <button class="mal-close-btn" onclick="maloshyToggle()" aria-label="Cerrar chat">✕</button>
         </div>
 
         {{-- Mensajes --}}
-        <div id="malochy-messages"></div>
+        <div id="maloshy-messages"></div>
 
         {{-- Quick replies --}}
-        <div id="malochy-quick"></div>
+        <div id="maloshy-quick"></div>
 
         {{-- Input --}}
         <div class="mal-input-area">
-            <input type="text" id="malochy-input" placeholder="Escribe aquí..." autocomplete="off"
-                   onkeydown="if(event.key==='Enter') malochySend()">
-            <button id="malochy-send" onclick="malochySend()" aria-label="Enviar mensaje">
+            <input type="text" id="maloshy-input" placeholder="Escribe aquí..." autocomplete="off"
+                   onkeydown="if(event.key==='Enter') maloshySend()">
+            <button id="maloshy-send" onclick="maloshySend()" aria-label="Enviar mensaje">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
                 </svg>
@@ -247,7 +247,7 @@
     /* ── CONFIG ───────────────────────────────────────────── */
     const MODO           = '{{ $isStaff ? "staff" : "public" }}';
     const ENDPOINT       = '{{ $chatEndpoint }}';
-    const VERIFY_EP      = '{{ route("malochy.verificar") }}';
+    const VERIFY_EP      = '{{ route("maloshy.verificar") }}';
     const CSRF           = '{{ csrf_token() }}';
     const STAFF_NAME     = '{{ $staffName }}';
     const AVATAR_URL     = '{{ asset("img/avatar-caricatura.png") }}';
@@ -257,42 +257,42 @@
     let awaitingCedula   = MODO === 'public';
 
     /* ── DOM ──────────────────────────────────────────────── */
-    const panel   = document.getElementById('malochy-panel');
-    const bubble  = document.getElementById('malochy-bubble');
-    const badge   = document.getElementById('malochy-badge');
-    const msgs    = document.getElementById('malochy-messages');
-    const quick   = document.getElementById('malochy-quick');
-    const input   = document.getElementById('malochy-input');
+    const panel   = document.getElementById('maloshy-panel');
+    const bubble  = document.getElementById('maloshy-bubble');
+    const badge   = document.getElementById('maloshy-badge');
+    const msgs    = document.getElementById('maloshy-messages');
+    const quick   = document.getElementById('maloshy-quick');
+    const input   = document.getElementById('maloshy-input');
 
     /* ── TOGGLE ───────────────────────────────────────────── */
-    window.malochyToggle = function () {
+    window.maloshyToggle = function () {
         isOpen = !isOpen;
         panel.classList.toggle('open', isOpen);
         bubble.classList.toggle('open', isOpen);
         if (isOpen) {
             badge.style.display = 'none';
-            if (msgs.children.length === 0) malochyInit();
+            if (msgs.children.length === 0) maloshyInit();
             setTimeout(() => input.focus(), 350);
         }
     };
 
     /* ── INIT: Mensaje de bienvenida ──────────────────────── */
-    function malochyInit() {
+    function maloshyInit() {
         if (MODO === 'staff') {
             const name = STAFF_NAME ? `, **${STAFF_NAME}**` : '';
             appendBot(
-                `¡Hola${name}! Soy **Malochy** en modo Analítico 🔐\n\n¿Qué datos necesitas hoy?`,
+                `¡Hola${name}! Soy **Maloshy** en modo Analítico 🔐\n\n¿Qué datos necesitas hoy?`,
                 ['Afluencia hoy', 'Afluencia esta semana', 'Horas pico', 'Buscar cliente']
             );
         } else {
             appendBot(
-                '¡Hola! Soy **Malochy**, el asistente ninja de Ninja Park Kids 🥷\n\nPara poder ayudarte mejor, ¿cuál es tu número de **cédula de identidad**?'
+                '¡Hola! Soy **Maloshy**, el asistente ninja de Ninja Park Kids 🥷\n\nPara poder ayudarte mejor, ¿cuál es tu número de **cédula de identidad**?'
             );
         }
     }
 
     /* ── ENVIAR MENSAJE ───────────────────────────────────── */
-    window.malochySend = function () {
+    window.maloshySend = function () {
         const text = input.value.trim();
         if (!text) return;
         input.value = '';
@@ -352,7 +352,7 @@
         div.className = 'mal-msg bot';
         div.innerHTML = `
             <div class="mal-msg-icon">
-                <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Malochy">
+                <img src="{{ asset('img/avatar-caricatura.png') }}" alt="Maloshy">
             </div>
             <div class="mal-bubble">${formatMd(text)}</div>`;
         msgs.appendChild(div);
@@ -375,7 +375,7 @@
     function showTyping() {
         const div = document.createElement('div');
         div.className = 'mal-msg bot'; div.id = 'mal-typing-row';
-        div.innerHTML = '<div class="mal-msg-icon"><img src="' + AVATAR_URL + '" alt="Malochy"></div><div class="mal-typing"><span></span><span></span><span></span></div>';
+        div.innerHTML = '<div class="mal-msg-icon"><img src="' + AVATAR_URL + '" alt="Maloshy"></div><div class="mal-typing"><span></span><span></span><span></span></div>';
         msgs.appendChild(div);
         scrollBot();
     }
@@ -403,7 +403,7 @@
             const btn = document.createElement('button');
             btn.className = 'mal-quick-btn';
             btn.textContent = r;
-            btn.onclick = () => { input.value = r; malochySend(); };
+            btn.onclick = () => { input.value = r; maloshySend(); };
             quick.appendChild(btn);
         });
     }

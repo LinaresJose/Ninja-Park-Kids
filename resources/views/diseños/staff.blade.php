@@ -172,7 +172,7 @@
         }
     </script>
     
-    @include('partials.malochy-widget', ['modo' => 'staff'])
+    @include('partials.maloshy-widget', ['modo' => 'staff'])
 @stack('scripts')
 </body>
 

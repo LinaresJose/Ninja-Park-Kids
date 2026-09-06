@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             '/consultar',               // Pantalla del cliente (cédula)
             '/registro/guardar',        // Guardar nuevo registro cliente
             '/registro/firma/*',        // Firma cliente recurrente
-            'api/malochy/*',            // Chatbot público
+            'api/maloshy/*',            // Chatbot público
         ]);
 
         $middleware->trustProxies(at: '*');

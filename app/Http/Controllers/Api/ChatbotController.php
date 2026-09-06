@@ -145,7 +145,7 @@ class ChatbotController extends Controller
     private function respondSaludo()
     {
         return response()->json([
-            'message'      => "¡Hola! Soy **Malochy**, tu asistente ninja 🥷\n¿En qué puedo ayudarte hoy?",
+            'message'      => "¡Hola! Soy **Maloshy**, tu asistente ninja 🥷\n¿En qué puedo ayudarte hoy?",
             'quickReplies' => ['Ver Tarifas', 'Ver Horarios', 'Promociones', 'Reservar', 'Redes Sociales'],
         ]);
     }
@@ -342,7 +342,7 @@ class ChatbotController extends Controller
     private function respondFallbackStaff()
     {
         return response()->json([
-            'message'      => "🤖 Soy **Malochy** en modo Staff. Puedo ayudarte con:\n\n• 📊 Afluencia (hoy / semana / mes)\n• ⏰ Horas de mayor tráfico\n• 🔍 Buscar cliente por nombre o cédula\n• 📋 Tarifas, horarios y promociones",
+            'message'      => "🤖 Soy **Maloshy** en modo Staff. Puedo ayudarte con:\n\n• 📊 Afluencia (hoy / semana / mes)\n• ⏰ Horas de mayor tráfico\n• 🔍 Buscar cliente por nombre o cédula\n• 📋 Tarifas, horarios y promociones",
             'quickReplies' => ['Afluencia hoy', 'Afluencia esta semana', 'Horas pico', 'Buscar cliente'],
         ]);
     }

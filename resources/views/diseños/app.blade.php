@@ -187,7 +187,7 @@
 
     
     @if(Request::is('/'))
-        @include('partials.malochy-widget', ['modo' => 'public'])
+        @include('partials.maloshy-widget', ['modo' => 'public'])
     @endif
 @stack('scripts')
 </body>

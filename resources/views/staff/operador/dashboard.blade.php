@@ -15,7 +15,7 @@
         'niños' => $acc->participantes->pluck('nombre')->toArray(),
         'status' => 'Vigente'
     ];
-})->toArray()) }}" style="position: relative; z-index: 1050;">
+})->toArray()) }}">
     
     <!-- HEADER DEL PANEL DE TRABAJO -->
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
@@ -184,10 +184,6 @@
             <button @click="modalVisible = false" class="btn text-white w-100 py-3 fw-bold rounded-3 font-title" style="background: var(--primary); font-size: 1.1rem; box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3);">
                 FINALIZAR REVISIÓN
             </button>
-            
-            <div class="text-center mt-3">
-                <small class="text-muted">TOKEN REF: <span class="font-monospace fw-bold" x-text="validData.token"></span></small>
-            </div>
         </div>
         </div>
     </div>
@@ -305,7 +301,7 @@
                 } else {
                     this.html5QrCode.clear();
                 }
-                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+                const config = { fps: 30, qrbox: { width: 250, height: 250 } };
                 
                 this.html5QrCode.start({ facingMode: "environment" }, config, (decodedText) => {
                     this.stopCamera();

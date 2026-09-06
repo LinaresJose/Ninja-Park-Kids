@@ -321,7 +321,7 @@
         <strong>CONSENTIMIENTO DEL PADRE, REPRESENTANTE O RESPONSABLE</strong><br>
         (El Cliente)<br><br>
 
-        <p class="para">En la ciudad de Naguanagua, Carabobo, a los
+        <p class="para">En la ciudad de Valencia, Municipio Naguanagua, Carabobo, a los
             {{ \Carbon\Carbon::parse($firma->fecha_firma)->format('d/m/Y') }}, yo,
             <strong>{{ $representante->nombre_completo }}</strong>, mayor de edad, titular de la Cédula de Identidad
             número <strong>{{ $representante->cedula }}</strong> y con número de contacto telefónico
