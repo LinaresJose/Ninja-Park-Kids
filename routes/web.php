@@ -20,29 +20,29 @@ Route::get('/csrf-token-refresh', function () {
 // 1. Pantalla Inicial: Donde el representante ingresa solo la cÃ©dula
 Route::get('/', [RegistroController::class, 'verificarIndex'])->name('registro.verificar');
 
-// 2. Procesar la CÃ©dula: Busca en la base de datos si ya existe
-Route::post('/consultar', [RegistroController::class, 'consultarCedula'])->name('registro.consultar')->middleware('throttle:40,1');
+// 2. Procesar la Cédula: Busca en la base de datos si ya existe (100/min soporta múltiples tablets en el mismo Wi-Fi)
+Route::post('/consultar', [RegistroController::class, 'consultarCedula'])->name('registro.consultar')->middleware('throttle:100,1');
 
-// 3. Formulario para Nuevo Registro: Se activa si la cÃ©dula no existe
+// 3. Formulario para Nuevo Registro: Se activa si la cédula no existe
 Route::get('/nuevo-registro/{cedula}', [RegistroController::class, 'index'])->name('registro.nuevo');
 
-// 4. Guardar los datos del nuevo registro
-Route::post('/registro/guardar', [RegistroController::class, 'store'])->name('registro.store')->middleware('throttle:10,1');
+// 4. Guardar los datos del nuevo registro (30/min para picos de registros simultáneos en el parque)
+Route::post('/registro/guardar', [RegistroController::class, 'store'])->name('registro.store')->middleware('throttle:30,1');
 
-// 5. Formulario de Firma: Se activa si la cÃ©dula YA existe
-Route::get('/registro/firma/{id}', [RegistroController::class, 'firma'])->name('registro.firma')->middleware('throttle:30,1');
+// 5. Formulario de Firma: Se activa si la cédula YA existe
+Route::get('/registro/firma/{id}', [RegistroController::class, 'firma'])->name('registro.firma')->middleware('throttle:60,1');
 
-// 6. Actualizar datos (por si aÃ±ade niÃ±os) y Firmar
-Route::post('/registro/firma/{id}', [RegistroController::class, 'guardarFirma'])->name('registro.guardarFirma')->middleware('throttle:15,1');
+// 6. Actualizar datos (por si añade niños) y Firmar (35/min para tráfico en sucursales)
+Route::post('/registro/firma/{id}', [RegistroController::class, 'guardarFirma'])->name('registro.guardarFirma')->middleware('throttle:35,1');
 
 // 7. Pantalla de Pase Exitoso
-Route::get('/pase/{acuerdo_id}', [RegistroController::class, 'pase'])->name('registro.pase')->middleware('throttle:30,1');
+Route::get('/pase/{acuerdo_id}', [RegistroController::class, 'pase'])->name('registro.pase')->middleware('throttle:60,1');
 
-// 8. Imagen del cÃ³digo QR generada en tiempo real (server-side)
-Route::get('/pase/qr/{acuerdo_id}', [RegistroController::class, 'qrImage'])->name('registro.qr')->middleware('throttle:30,1');
+// 8. Imagen del código QR generada en tiempo real (server-side)
+Route::get('/pase/qr/{acuerdo_id}', [RegistroController::class, 'qrImage'])->name('registro.qr')->middleware('throttle:60,1');
 
-// 9. Endpoint de validaciÃ³n para el Operador Integral (escaneando el QR)
-Route::get('/validar/{token}', [RegistroController::class, 'validarPase'])->name('registro.validar')->middleware('throttle:60,1');
+// 9. Endpoint de validación para el Operador Integral (120/min soporta múltiples operadores escaneando)
+Route::get('/validar/{token}', [RegistroController::class, 'validarPase'])->name('registro.validar')->middleware('throttle:120,1');
 
 
 /*
