@@ -25,7 +25,8 @@ class GuardarFirmaRequest extends FormRequest
             'fechas_nacimiento_niños.*' => 'sometimes|date|before:today',
             'participantes_existentes'  => 'array',
             'aceptar_terminos'          => 'required|accepted',
-            'firma_base64'              => 'required|string',
+            // Limite maximo de 200 KB en Base64 para prevenir ataques DoS por payloads gigantes
+            'firma_base64'              => 'required|string|max:200000',
         ];
     }
 

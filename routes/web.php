@@ -21,28 +21,28 @@ Route::get('/csrf-token-refresh', function () {
 Route::get('/', [RegistroController::class, 'verificarIndex'])->name('registro.verificar');
 
 // 2. Procesar la CÃ©dula: Busca en la base de datos si ya existe
-Route::post('/consultar', [RegistroController::class, 'consultarCedula'])->name('registro.consultar');
+Route::post('/consultar', [RegistroController::class, 'consultarCedula'])->name('registro.consultar')->middleware('throttle:40,1');
 
 // 3. Formulario para Nuevo Registro: Se activa si la cÃ©dula no existe
 Route::get('/nuevo-registro/{cedula}', [RegistroController::class, 'index'])->name('registro.nuevo');
 
 // 4. Guardar los datos del nuevo registro
-Route::post('/registro/guardar', [RegistroController::class, 'store'])->name('registro.store');
+Route::post('/registro/guardar', [RegistroController::class, 'store'])->name('registro.store')->middleware('throttle:10,1');
 
 // 5. Formulario de Firma: Se activa si la cÃ©dula YA existe
-Route::get('/registro/firma/{id}', [RegistroController::class, 'firma'])->name('registro.firma');
+Route::get('/registro/firma/{id}', [RegistroController::class, 'firma'])->name('registro.firma')->middleware('throttle:30,1');
 
 // 6. Actualizar datos (por si aÃ±ade niÃ±os) y Firmar
-Route::post('/registro/firma/{id}', [RegistroController::class, 'guardarFirma'])->name('registro.guardarFirma');
+Route::post('/registro/firma/{id}', [RegistroController::class, 'guardarFirma'])->name('registro.guardarFirma')->middleware('throttle:15,1');
 
 // 7. Pantalla de Pase Exitoso
-Route::get('/pase/{acuerdo_id}', [RegistroController::class, 'pase'])->name('registro.pase');
+Route::get('/pase/{acuerdo_id}', [RegistroController::class, 'pase'])->name('registro.pase')->middleware('throttle:30,1');
 
 // 8. Imagen del cÃ³digo QR generada en tiempo real (server-side)
-Route::get('/pase/qr/{acuerdo_id}', [RegistroController::class, 'qrImage'])->name('registro.qr');
+Route::get('/pase/qr/{acuerdo_id}', [RegistroController::class, 'qrImage'])->name('registro.qr')->middleware('throttle:30,1');
 
 // 9. Endpoint de validaciÃ³n para el Operador Integral (escaneando el QR)
-Route::get('/validar/{token}', [RegistroController::class, 'validarPase'])->name('registro.validar');
+Route::get('/validar/{token}', [RegistroController::class, 'validarPase'])->name('registro.validar')->middleware('throttle:60,1');
 
 
 /*
@@ -54,7 +54,8 @@ Route::get('/validar/{token}', [RegistroController::class, 'validarPase'])->name
 Route::prefix('staff-ninja')->middleware('audit')->group(function () {
     // Autenticación (Público dentro del prefijo)
     Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+    // Protección anti-fuerza-bruta: máximo 5 intentos por minuto por IP
+    Route::post('/login', [LoginController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // --- RECUPERACIÓN DE CONTRASEÑA (Públicas dentro del prefijo) ---
@@ -116,7 +117,7 @@ Route::prefix('staff-ninja')->middleware('audit')->group(function () {
     });
 });
 // --- API BOT PÚBLICA ---
-Route::prefix('api/bot')->group(function () {
+Route::prefix('api/bot')->middleware('throttle:30,1')->group(function () {
     Route::get('/tarifas', [App\Http\Controllers\Api\BotController::class, 'tarifas']);
     Route::get('/promociones', [App\Http\Controllers\Api\BotController::class, 'promociones']);
     Route::get('/horarios', [App\Http\Controllers\Api\BotController::class, 'horarios']);

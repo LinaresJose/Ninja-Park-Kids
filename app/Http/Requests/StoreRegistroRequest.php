@@ -31,7 +31,7 @@ class StoreRegistroRequest extends FormRequest
             'nombres_niños.*'            => 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
             'apellidos_niños.*'          => 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
             'fechas_nacimiento_niños.*'  => 'required|date|before:today',
-            'firma_base64'               => 'required|string',
+            'firma_base64'               => 'required|string|max:200000',
         ];
     }
 

@@ -9,5 +9,6 @@ Artisan::command('inspire', function () {
 
 use Illuminate\Support\Facades\Schedule;
 
-// Programar el backup diario a medianoche
-Schedule::command('db:backup')->dailyAt('00:00');
+// Backup diario automatico a las 3:00 AM (hora del servidor / UTC)
+// El comando guarda los ultimos 7 dias y elimina backups mas antiguos automaticamente.
+Schedule::command('db:backup')->dailyAt('03:00');
