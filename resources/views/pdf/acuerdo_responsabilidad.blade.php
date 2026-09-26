@@ -317,35 +317,62 @@
             con fines publicitarios y comerciales.</p>
     @endif
 
-    <div class="consentimiento">
-        <strong>CONSENTIMIENTO DEL PADRE, REPRESENTANTE O RESPONSABLE</strong><br>
-        (El Cliente)<br><br>
+    @if(!empty($firma->es_adulto_solo) || $participantes->isEmpty())
+        <div class="consentimiento">
+            <strong>CONSENTIMIENTO DEL PARTICIPANTE ADULTO</strong><br>
+            (El Cliente)<br><br>
 
-        <p class="para">En la ciudad de Valencia, Municipio Naguanagua, Carabobo, a los
-            {{ \Carbon\Carbon::parse($firma->fecha_firma)->format('d/m/Y') }}, yo,
-            <strong>{{ $representante->nombre_completo }}</strong>, mayor de edad, titular de la Cédula de Identidad
-            número <strong>{{ $representante->cedula }}</strong> y con número de contacto telefónico
-            <strong>{{ $representante->telefono ?? '—' }}</strong>, actuando en pleno uso de mis facultades civiles,
-            DECLARO EXPRESAMENTE:
-        </p>
+            <p class="para">En la ciudad de Valencia, Municipio Naguanagua, Carabobo, a los
+                {{ \Carbon\Carbon::parse($firma->fecha_firma)->format('d/m/Y') }}, yo,
+                <strong>{{ $representante->nombre_completo }}</strong>, mayor de edad, titular de la Cédula de Identidad
+                número <strong>{{ $representante->cedula }}</strong> y con número de contacto telefónico
+                <strong>{{ $representante->telefono ?? '—' }}</strong>, actuando en pleno uso de mis facultades civiles,
+                DECLARO EXPRESAMENTE:
+            </p>
 
-        <p class="para">Que he leído, comprendido y analizado en su totalidad el Acuerdo de Relevo de Responsabilidad de
-            Ninja Park, C.A. descrito anteriormente. En consecuencia, manifiesto mi voluntad libre y soberana de
-            adherirme a todos sus términos y condiciones, asumiendo la responsabilidad total por mi participación y la
-            de los menores de edad que represento legalmente y que se detallan a continuación:</p>
+            <p class="para">Que he leído, comprendido y analizado en su totalidad el Acuerdo de Relevo de Responsabilidad de
+                Ninja Park, C.A. descrito anteriormente. En consecuencia, manifiesto mi voluntad libre y soberana de
+                adherirme a todos sus términos y condiciones, asumiendo la responsabilidad total, directa y exclusiva por mi propia
+                participación en las atracciones e instalaciones del parque, actuando en mi propio nombre y representación como mayor de edad.</p>
 
-        <p class="para">Participantes:</p>
-        <ul class="clause-list">
-            @foreach($participantes as $hijo)
-                <li><strong>{{ $hijo->nombre_completo }}</strong>, en su condición de participante bajo mi tutela.</li>
-            @endforeach
-        </ul>
+            <p class="para"><strong>Modalidad de Ingreso:</strong> Participante Adulto Individual (sin acompañantes menores de edad a cargo).</p>
 
-        <p class="para" style="margin-top: 8px;">Reconozco que el presente documento constituye un contrato vinculante y
-            que mi firma electrónica, estampada al pie de este instrumento, ratifica mi compromiso de cumplir y hacer
-            cumplir las normas de seguridad del parque, liberando a Ninja Park, C.A. de toda responsabilidad en los
-            términos ya expuestos.</p>
-    </div>
+            <p class="para" style="margin-top: 8px;">Reconozco que el presente documento constituye un contrato vinculante y
+                que mi firma electrónica, estampada al pie de este instrumento, ratifica mi compromiso de cumplir y respetar
+                las normas de seguridad del parque, liberando a Ninja Park, C.A. de toda responsabilidad en los
+                términos ya expuestos.</p>
+        </div>
+    @else
+        <div class="consentimiento">
+            <strong>CONSENTIMIENTO DEL PADRE, REPRESENTANTE O RESPONSABLE</strong><br>
+            (El Cliente)<br><br>
+
+            <p class="para">En la ciudad de Valencia, Municipio Naguanagua, Carabobo, a los
+                {{ \Carbon\Carbon::parse($firma->fecha_firma)->format('d/m/Y') }}, yo,
+                <strong>{{ $representante->nombre_completo }}</strong>, mayor de edad, titular de la Cédula de Identidad
+                número <strong>{{ $representante->cedula }}</strong> y con número de contacto telefónico
+                <strong>{{ $representante->telefono ?? '—' }}</strong>, actuando en pleno uso de mis facultades civiles,
+                DECLARO EXPRESAMENTE:
+            </p>
+
+            <p class="para">Que he leído, comprendido y analizado en su totalidad el Acuerdo de Relevo de Responsabilidad de
+                Ninja Park, C.A. descrito anteriormente. En consecuencia, manifiesto mi voluntad libre y soberana de
+                adherirme a todos sus términos y condiciones, asumiendo la responsabilidad total por mi participación y la
+                de los menores de edad que represento legalmente y que se detallan a continuación:</p>
+
+            <p class="para">Participantes:</p>
+            <ul class="clause-list">
+                @foreach($participantes as $hijo)
+                    <li><strong>{{ $hijo->nombre_completo }}</strong>, en su condición de participante bajo mi tutela.</li>
+                @endforeach
+            </ul>
+
+            <p class="para" style="margin-top: 8px;">Reconozco que el presente documento constituye un contrato vinculante y
+                que mi firma electrónica, estampada al pie de este instrumento, ratifica mi compromiso de cumplir y hacer
+                cumplir las normas de seguridad del parque, liberando a Ninja Park, C.A. de toda responsabilidad en los
+                términos ya expuestos.</p>
+        </div>
+    @endif
 
 
     {{-- ── FIRMA ─────────────────────────────────────────────── --}}

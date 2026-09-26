@@ -37,12 +37,45 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
-                    <h4 class="section-title mb-0">Selección de Participantes</h4>
-                    <button type="button" class="btn-ninja-outline" onclick="agregarNiño()">
-                        <i class="bi bi-person-plus-fill me-1"></i> Añadir Nuevo Niño
-                    </button>
+                <!-- SELECTOR DE MODALIDAD DE INGRESO (PREDETERMINADO CON NIÑOS) -->
+                <div class="mb-4 mt-5 p-4 rounded-4" style="background: rgba(123, 44, 191, 0.04); border: 2px solid rgba(123, 44, 191, 0.12);">
+                    <label class="form-label fw-bold mb-3" style="color: var(--ninja-purple); font-size: 1.05rem;">
+                        <i class="bi bi-person-gear me-2"></i> Modalidad de Ingreso de Hoy:
+                    </label>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="d-flex align-items-center p-3 rounded-3 border position-relative" style="cursor: pointer; transition: all 0.2s;" id="label-tipo-con-ninos" onclick="cambiarModalidadIngreso('con_ninos')">
+                                <input class="form-check-input me-3 ms-1" type="radio" name="tipo_ingreso" id="tipo_con_ninos" value="con_ninos" 
+                                       {{ old('tipo_ingreso', 'con_ninos') === 'con_ninos' ? 'checked' : '' }}
+                                       style="transform: scale(1.4); cursor: pointer;">
+                                <div>
+                                    <strong class="d-block text-dark"><i class="bi bi-people-fill me-1 text-primary"></i> Vengo con niños / representados</strong>
+                                    <small class="text-muted d-block">Opción predeterminada: Seleccionar o añadir niños.</small>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="d-flex align-items-center p-3 rounded-3 border position-relative" style="cursor: pointer; transition: all 0.2s;" id="label-tipo-solo-adulto" onclick="cambiarModalidadIngreso('solo_adulto')">
+                                <input class="form-check-input me-3 ms-1" type="radio" name="tipo_ingreso" id="tipo_solo_adulto" value="solo_adulto" 
+                                       {{ old('tipo_ingreso') === 'solo_adulto' ? 'checked' : '' }}
+                                       style="transform: scale(1.4); cursor: pointer;">
+                                <div>
+                                    <strong class="d-block text-dark"><i class="bi bi-person-fill text-success me-1"></i> Voy a ingresar yo solo hoy a disfrutar</strong>
+                                    <small class="text-muted d-block">Participante Adulto Individual (sin acompañantes menores).</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- BLOQUE DE SELECCIÓN DE PARTICIPANTES -->
+                <div id="bloque-seleccion-participantes">
+                    <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+                        <h4 class="section-title mb-0">Selección de Participantes</h4>
+                        <button type="button" class="btn-ninja-outline" onclick="agregarNiño()">
+                            <i class="bi bi-person-plus-fill me-1"></i> Añadir Nuevo Niño
+                        </button>
+                    </div>
 
                 <div class="mb-5">
                     <p class="small text-muted mb-3"><i class="bi bi-check2-square me-1"></i> <strong>Selecciona la casilla</strong> de los niños que ingresarán hoy al parque.</p>
@@ -111,6 +144,7 @@
                         @endforeach
                     @endif
                 </div>
+                </div> <!-- /bloque-seleccion-participantes -->
 
                 <hr class="my-5" style="border-color: rgba(0,0,0,0.1);">
 
@@ -228,8 +262,56 @@
         }, 400);
     }
 
+    // Función para alternar entre modalidad con niños o solo adulto
+    function cambiarModalidadIngreso(tipo) {
+        const bloque = document.getElementById('bloque-seleccion-participantes');
+        const labelConNinos = document.getElementById('label-tipo-con-ninos');
+        const labelSoloAdulto = document.getElementById('label-tipo-solo-adulto');
+        const radioConNinos = document.getElementById('tipo_con_ninos');
+        const radioSoloAdulto = document.getElementById('tipo_solo_adulto');
+
+        if (tipo === 'solo_adulto') {
+            if (radioSoloAdulto) radioSoloAdulto.checked = true;
+            if (bloque) {
+                bloque.style.display = 'none';
+                bloque.querySelectorAll('input').forEach(input => {
+                    input.disabled = true;
+                });
+            }
+            if (labelSoloAdulto) {
+                labelSoloAdulto.style.borderColor = 'var(--ninja-purple)';
+                labelSoloAdulto.style.background = 'rgba(123, 44, 191, 0.08)';
+            }
+            if (labelConNinos) {
+                labelConNinos.style.borderColor = '#dee2e6';
+                labelConNinos.style.background = '#fff';
+            }
+        } else {
+            if (radioConNinos) radioConNinos.checked = true;
+            if (bloque) {
+                bloque.style.display = 'block';
+                bloque.querySelectorAll('input').forEach(input => {
+                    input.disabled = false;
+                });
+            }
+            if (labelConNinos) {
+                labelConNinos.style.borderColor = 'var(--ninja-cyan)';
+                labelConNinos.style.background = 'rgba(0, 245, 255, 0.08)';
+            }
+            if (labelSoloAdulto) {
+                labelSoloAdulto.style.borderColor = '#dee2e6';
+                labelSoloAdulto.style.background = '#fff';
+            }
+        }
+    }
+
     // Inicialización Global
     document.addEventListener('DOMContentLoaded', function() {
+        const radioInicial = document.querySelector('input[name="tipo_ingreso"]:checked') || document.getElementById('tipo_con_ninos');
+        if (radioInicial) {
+            cambiarModalidadIngreso(radioInicial.value);
+        }
+
         flatpickr(".datepicker-child", {
             locale: "es",
             dateFormat: "Y-m-d",

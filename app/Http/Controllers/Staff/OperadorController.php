@@ -59,6 +59,7 @@ class OperadorController extends Controller
 
         // Mapeamos para enviar un JSON limpio a Alpine.js
         $data = $resultados->map(function($acc) {
+            $esAdultoSolo = (bool) ($acc->es_adulto_solo || $acc->participantes->isEmpty());
             return [
                 'id' => $acc->id,
                 'token' => $acc->token_qr,
@@ -66,6 +67,7 @@ class OperadorController extends Controller
                 'representante' => $acc->representante->nombre . ' ' . $acc->representante->apellido,
                 'cedula' => $acc->representante->cedula,
                 'telefono' => $acc->representante->telefono,
+                'es_adulto_solo' => $esAdultoSolo,
                 'niños' => $acc->participantes->pluck('nombre')->toArray(),
                 'status'        => Carbon::parse($acc->fecha_firma)->isToday() ? '✅ Vigente' : '🔴 Expirado'
             ];
@@ -88,21 +90,23 @@ class OperadorController extends Controller
         }
 
         $vigente = Carbon::parse($acuerdo->fecha_firma)->isToday();
+        $esAdultoSolo = (bool) ($acuerdo->es_adulto_solo || $acuerdo->participantes->isEmpty());
 
         return response()->json([
-            'success'       => true,
-            'representante' => $acuerdo->representante->nombre . ' ' . $acuerdo->representante->apellido,
-            'cedula'        => $acuerdo->representante->cedula,
-            'telefono'      => $acuerdo->representante->telefono,
-            'niños'         => $acuerdo->participantes->map(function($p) {
+            'success'        => true,
+            'representante'  => $acuerdo->representante->nombre . ' ' . $acuerdo->representante->apellido,
+            'cedula'         => $acuerdo->representante->cedula,
+            'telefono'       => $acuerdo->representante->telefono,
+            'es_adulto_solo' => $esAdultoSolo,
+            'niños'          => $acuerdo->participantes->map(function($p) {
                 return [
                     'nombre' => $p->nombre . ' ' . $p->apellido,
                     'edad'   => Carbon::parse($p->fecha_nacimiento)->age
                 ];
             }),
-            'fecha_firma'   => Carbon::parse($acuerdo->fecha_firma)->format('d/m/Y H:i'),
-            'vigente'       => $vigente,
-            'status'        => $vigente ? '✅ Vigente' : '🔴 Expirado — Pase de otro día',
+            'fecha_firma'    => Carbon::parse($acuerdo->fecha_firma)->format('d/m/Y H:i'),
+            'vigente'        => $vigente,
+            'status'         => $vigente ? '✅ Vigente' : '🔴 Expirado — Pase de otro día',
         ], $vigente ? 200 : 422);
     }
 }

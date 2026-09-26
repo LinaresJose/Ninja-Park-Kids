@@ -19,15 +19,24 @@ class GuardarFirmaRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'nombres_niños.*'           => 'sometimes|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
-            'apellidos_niños.*'         => 'sometimes|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
-            'fechas_nacimiento_niños.*' => 'sometimes|date|before:today',
-            'participantes_existentes'  => 'array',
+        $tipoIngreso = $this->input('tipo_ingreso', 'con_ninos');
+        $esAdultoSolo = ($tipoIngreso === 'solo_adulto');
+
+        $rules = [
+            'tipo_ingreso'              => 'nullable|in:con_ninos,solo_adulto',
             'aceptar_terminos'          => 'required|accepted',
             // Limite maximo de 200 KB en Base64 para prevenir ataques DoS por payloads gigantes
             'firma_base64'              => 'required|string|max:200000',
         ];
+
+        if (!$esAdultoSolo) {
+            $rules['nombres_niños.*']           = 'sometimes|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50';
+            $rules['apellidos_niños.*']         = 'sometimes|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50';
+            $rules['fechas_nacimiento_niños.*'] = 'sometimes|date|before:today';
+            $rules['participantes_existentes']  = 'sometimes|array';
+        }
+
+        return $rules;
     }
 
     /**
@@ -46,11 +55,16 @@ class GuardarFirmaRequest extends FormRequest
     }
 
     /**
-     * Validación adicional de lógica de negocio (mínimo un niño, máximo 15).
+     * Validación adicional de lógica de negocio (mínimo un niño si es con niños, máximo 15).
      */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
+            $tipoIngreso = $this->input('tipo_ingreso', 'con_ninos');
+            if ($tipoIngreso === 'solo_adulto') {
+                return;
+            }
+
             $totalExistentes = count($this->input('participantes_existentes', []));
             $totalNuevos     = count($this->input('nombres_niños', []));
             $total           = $totalExistentes + $totalNuevos;

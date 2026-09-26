@@ -29,13 +29,14 @@
                                oninput="this.value = this.value.replace(/[^a-zA-Z\sñÑáéíóúÁÉÍÓÚ]/g, '');"
                                value="{{ old('apellido') }}">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" id="contenedor-parentesco">
                         <label class="form-label">Parentesco</label>
                         <select name="parentesco" class="form-select" required>
                             <option value="" disabled selected>Seleccione...</option>
                             <option value="Padre" {{ old('parentesco') == 'Padre' ? 'selected' : '' }}>Padre</option>
                             <option value="Madre" {{ old('parentesco') == 'Madre' ? 'selected' : '' }}>Madre</option>
                             <option value="Representante Legal" {{ old('parentesco') == 'Representante Legal' ? 'selected' : '' }}>Representante Legal</option>
+                            <option value="Propio (Adulto)" {{ old('parentesco') == 'Propio (Adulto)' ? 'selected' : '' }}>Propio (Adulto)</option>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -57,14 +58,47 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="section-title mb-0">Niños (Participantes)</h4>
-                    <button type="button" class="btn-ninja-outline" onclick="agregarNiño()">
-                        <i class="bi bi-person-plus-fill me-1"></i> Añadir Niño
-                    </button>
+                <!-- SELECTOR DE MODALIDAD DE INGRESO (PREDETERMINADO CON NIÑOS) -->
+                <div class="mb-4 p-4 rounded-4" style="background: rgba(123, 44, 191, 0.04); border: 2px solid rgba(123, 44, 191, 0.12);">
+                    <label class="form-label fw-bold mb-3" style="color: var(--ninja-purple); font-size: 1.05rem;">
+                        <i class="bi bi-person-gear me-2"></i> Modalidad de Ingreso a las Atracciones:
+                    </label>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="d-flex align-items-center p-3 rounded-3 border position-relative" style="cursor: pointer; transition: all 0.2s;" id="label-tipo-con-ninos" onclick="cambiarModalidadIngreso('con_ninos')">
+                                <input class="form-check-input me-3 ms-1" type="radio" name="tipo_ingreso" id="tipo_con_ninos" value="con_ninos" 
+                                       {{ old('tipo_ingreso', 'con_ninos') === 'con_ninos' ? 'checked' : '' }}
+                                       style="transform: scale(1.4); cursor: pointer;">
+                                <div>
+                                    <strong class="d-block text-dark"><i class="bi bi-people-fill me-1 text-primary"></i> Vengo con niños / menores a cargo</strong>
+                                    <small class="text-muted d-block">Opción predeterminada: Asumo tutela y registro de menores.</small>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="d-flex align-items-center p-3 rounded-3 border position-relative" style="cursor: pointer; transition: all 0.2s;" id="label-tipo-solo-adulto" onclick="cambiarModalidadIngreso('solo_adulto')">
+                                <input class="form-check-input me-3 ms-1" type="radio" name="tipo_ingreso" id="tipo_solo_adulto" value="solo_adulto" 
+                                       {{ old('tipo_ingreso') === 'solo_adulto' ? 'checked' : '' }}
+                                       style="transform: scale(1.4); cursor: pointer;">
+                                <div>
+                                    <strong class="d-block text-dark"><i class="bi bi-person-fill text-success me-1"></i> Voy a ingresar yo solo a disfrutar</strong>
+                                    <small class="text-muted d-block">Participante Adulto Individual (sin acompañantes menores).</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="contenedor-niños">
+                <!-- BLOQUE DE NIÑOS (PARTICIPANTES) -->
+                <div id="bloque-ninos">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="section-title mb-0">Niños (Participantes)</h4>
+                        <button type="button" class="btn-ninja-outline" onclick="agregarNiño()">
+                            <i class="bi bi-person-plus-fill me-1"></i> Añadir Niño
+                        </button>
+                    </div>
+
+                    <div id="contenedor-niños">
                     @php
                         $oldNombres = old('nombres_niños');
                         $oldApellidos = old('apellidos_niños');
@@ -128,6 +162,7 @@
                     </div>
                     @endif
                 </div>
+                </div> <!-- /bloque-ninos -->
 
                 <h4 class="section-title mb-4">Acuerdo de Responsabilidad</h4>
                 <div class="p-4 mb-4" style="background: rgba(255,255,255,0.7); border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); max-height: 200px; overflow-y: auto; font-size: 0.9rem; color: #444; line-height: 1.6;">
@@ -236,8 +271,75 @@
         }, 400);
     }
 
+    // Función para alternar entre modalidad con niños o solo adulto
+    function cambiarModalidadIngreso(tipo) {
+        const bloqueNinos = document.getElementById('bloque-ninos');
+        const contenedorParentesco = document.getElementById('contenedor-parentesco');
+        const parentescoSelect = document.querySelector('select[name="parentesco"]');
+        const labelConNinos = document.getElementById('label-tipo-con-ninos');
+        const labelSoloAdulto = document.getElementById('label-tipo-solo-adulto');
+        const radioConNinos = document.getElementById('tipo_con_ninos');
+        const radioSoloAdulto = document.getElementById('tipo_solo_adulto');
+
+        if (tipo === 'solo_adulto') {
+            if (radioSoloAdulto) radioSoloAdulto.checked = true;
+            if (bloqueNinos) {
+                bloqueNinos.style.display = 'none';
+                bloqueNinos.querySelectorAll('input').forEach(input => {
+                    input.disabled = true;
+                });
+            }
+            if (contenedorParentesco) {
+                contenedorParentesco.style.display = 'none';
+            }
+            if (parentescoSelect) {
+                parentescoSelect.value = 'Propio (Adulto)';
+                parentescoSelect.removeAttribute('required');
+            }
+            if (labelSoloAdulto) {
+                labelSoloAdulto.style.borderColor = 'var(--ninja-purple)';
+                labelSoloAdulto.style.background = 'rgba(123, 44, 191, 0.08)';
+            }
+            if (labelConNinos) {
+                labelConNinos.style.borderColor = '#dee2e6';
+                labelConNinos.style.background = '#fff';
+            }
+        } else {
+            if (radioConNinos) radioConNinos.checked = true;
+            if (bloqueNinos) {
+                bloqueNinos.style.display = 'block';
+                bloqueNinos.querySelectorAll('input').forEach(input => {
+                    input.disabled = false;
+                });
+            }
+            if (contenedorParentesco) {
+                contenedorParentesco.style.display = 'block';
+            }
+            if (parentescoSelect) {
+                if (parentescoSelect.value === 'Propio (Adulto)') {
+                    parentescoSelect.value = '';
+                }
+                parentescoSelect.setAttribute('required', 'required');
+            }
+            if (labelConNinos) {
+                labelConNinos.style.borderColor = 'var(--ninja-cyan)';
+                labelConNinos.style.background = 'rgba(0, 245, 255, 0.08)';
+            }
+            if (labelSoloAdulto) {
+                labelSoloAdulto.style.borderColor = '#dee2e6';
+                labelSoloAdulto.style.background = '#fff';
+            }
+        }
+    }
+
     // Inicialización Global de Flatpickr
     document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar modalidad de ingreso
+        const radioInicial = document.querySelector('input[name="tipo_ingreso"]:checked') || document.getElementById('tipo_con_ninos');
+        if (radioInicial) {
+            cambiarModalidadIngreso(radioInicial.value);
+        }
+
         // Para el representante (18+ años)
         flatpickr(".datepicker-rep", {
             locale: "es",

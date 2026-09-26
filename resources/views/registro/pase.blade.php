@@ -62,10 +62,23 @@
                 </div>
             </div>
 
-            <!-- NIÑOS AUTORIZADOS HOY -->
-            <h4 class="section-title mb-4 text-start">Niños Autorizados Hoy</h4>
+            <!-- PARTICIPANTES / MODALIDAD -->
+            <h4 class="section-title mb-4 text-start">
+                {{ ($acuerdo->es_adulto_solo || $acuerdo->participantes->isEmpty()) ? 'Modalidad de Ingreso' : 'Niños Autorizados Hoy' }}
+            </h4>
             <div class="row g-3 text-start mb-5">
-                @forelse($acuerdo->participantes as $niño)
+                @if($acuerdo->es_adulto_solo || $acuerdo->participantes->isEmpty())
+                <div class="col-12">
+                    <div class="p-3 d-flex align-items-center" style="background: rgba(255,255,255,0.85); border-left: 4px solid var(--ninja-purple); border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.05);">
+                        <i class="bi bi-person-badge-fill me-3" style="font-size: 1.8rem; color: var(--ninja-purple);"></i>
+                        <div>
+                            <h6 class="mb-0 fw-bold" style="color: var(--ninja-dark);">PARTICIPANTE ADULTO INDIVIDUAL</h6>
+                            <small class="text-muted"><i class="bi bi-shield-check me-1"></i>Pase personal emitido para ingresar a las atracciones sin menores de edad a cargo.</small>
+                        </div>
+                    </div>
+                </div>
+                @else
+                @foreach($acuerdo->participantes as $niño)
                 <div class="col-md-6">
                     <div class="p-3 d-flex align-items-center" style="background: rgba(255,255,255,0.85); border-left: 4px solid var(--ninja-cyan); border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.05);">
                         <i class="bi bi-person-fill-check me-3" style="font-size: 1.6rem; color: var(--ninja-cyan);"></i>
@@ -75,11 +88,8 @@
                         </div>
                     </div>
                 </div>
-                @empty
-                <div class="col-12">
-                    <p class="text-muted">No hay niños registrados en este pase.</p>
-                </div>
-                @endforelse
+                @endforeach
+                @endif
             </div>
 
             <div class="mt-2">

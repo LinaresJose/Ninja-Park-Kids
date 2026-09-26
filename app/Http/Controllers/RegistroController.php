@@ -80,29 +80,47 @@ class RegistroController extends Controller
             ])->withInput();
         }
 
+        $esAdultoSolo = $request->input('tipo_ingreso') === 'solo_adulto';
+        $parentesco   = $esAdultoSolo
+            ? ($request->input('parentesco') ?: 'Propio (Adulto)')
+            : $request->input('parentesco');
+
         // Crear o recuperar representante de forma idempotente y atómica
         try {
             DB::beginTransaction();
 
+            $repData = $request->only(['nombre', 'apellido', 'correo', 'telefono', 'fecha_nacimiento']);
+            $repData['parentesco'] = $parentesco;
+
             $representante = Representante::firstOrCreate(
                 ['cedula' => $request->cedula],
-                $request->only(['nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento'])
+                $repData
             );
 
             // Si ya existía, actualizar datos de contacto
-            $representante->update($request->only(['nombre', 'apellido', 'parentesco', 'correo', 'telefono', 'fecha_nacimiento']));
+            $representante->update($repData);
 
-            // Construir array de niños nuevos con formato estándar
+            // Construir array de niños nuevos con formato estándar (solo si viene con niños)
             $nuevosNiños = [];
-            foreach ($request->input('nombres_niños', []) as $key => $nombre) {
-                $nuevosNiños[] = [
-                    'nombre'           => $nombre,
-                    'apellido'         => $request->input("apellidos_niños.$key"),
-                    'fecha_nacimiento' => $request->input("fechas_nacimiento_niños.$key"),
-                ];
+            if (!$esAdultoSolo) {
+                foreach ($request->input('nombres_niños', []) as $key => $nombre) {
+                    if (!empty($nombre)) {
+                        $nuevosNiños[] = [
+                            'nombre'           => $nombre,
+                            'apellido'         => $request->input("apellidos_niños.$key"),
+                            'fecha_nacimiento' => $request->input("fechas_nacimiento_niños.$key"),
+                        ];
+                    }
+                }
             }
 
-            $acuerdo = $this->registroService->crearAcuerdo($representante, [], $nuevosNiños, $request->firma_base64);
+            $acuerdo = $this->registroService->crearAcuerdo(
+                $representante, 
+                [], 
+                $nuevosNiños, 
+                $request->firma_base64,
+                $esAdultoSolo
+            );
 
             DB::commit();
         } catch (\RuntimeException $e) {
@@ -139,25 +157,38 @@ class RegistroController extends Controller
     public function guardarFirma(GuardarFirmaRequest $request, $id)
     {
         $representante = Representante::findOrFail($id);
+        $esAdultoSolo  = $request->input('tipo_ingreso') === 'solo_adulto';
 
-        // Filtrar solo los IDs de participantes que pertenecen al representante
-        $participantesIds = $this->registroService->filtrarParticipantesValidos(
-            $representante,
-            $request->input('participantes_existentes', [])
-        );
+        $participantesIds = [];
+        $nuevosNiños      = [];
 
-        // Construir array de niños nuevos
-        $nuevosNiños = [];
-        foreach ($request->input('nombres_niños', []) as $key => $nombre) {
-            $nuevosNiños[] = [
-                'nombre'           => $nombre,
-                'apellido'         => $request->input("apellidos_niños.$key"),
-                'fecha_nacimiento' => $request->input("fechas_nacimiento_niños.$key"),
-            ];
+        if (!$esAdultoSolo) {
+            // Filtrar solo los IDs de participantes que pertenecen al representante
+            $participantesIds = $this->registroService->filtrarParticipantesValidos(
+                $representante,
+                $request->input('participantes_existentes', [])
+            );
+
+            // Construir array de niños nuevos
+            foreach ($request->input('nombres_niños', []) as $key => $nombre) {
+                if (!empty($nombre)) {
+                    $nuevosNiños[] = [
+                        'nombre'           => $nombre,
+                        'apellido'         => $request->input("apellidos_niños.$key"),
+                        'fecha_nacimiento' => $request->input("fechas_nacimiento_niños.$key"),
+                    ];
+                }
+            }
         }
 
         try {
-            $acuerdo = $this->registroService->crearAcuerdo($representante, $participantesIds, $nuevosNiños, $request->firma_base64);
+            $acuerdo = $this->registroService->crearAcuerdo(
+                $representante, 
+                $participantesIds, 
+                $nuevosNiños, 
+                $request->firma_base64,
+                $esAdultoSolo
+            );
         } catch (\RuntimeException $e) {
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
         } catch (\Throwable $e) {

@@ -16,7 +16,12 @@ class AcuerdoFirmado extends Model
         'terminos_id',
         'fecha_firma',
         'token_qr',
-        'firma_base64'
+        'firma_base64',
+        'es_adulto_solo'
+    ];
+
+    protected $casts = [
+        'es_adulto_solo' => 'boolean',
     ];
 
     // Relación: El representante que firmó

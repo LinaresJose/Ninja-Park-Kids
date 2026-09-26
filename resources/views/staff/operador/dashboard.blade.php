@@ -114,6 +114,11 @@
                                     <template x-for="niño in item.niños">
                                         <span class="badge border bg-white text-dark rounded-pill shadow-sm" style="font-weight: 500;" x-text="niño"></span>
                                     </template>
+                                    <template x-if="item.es_adulto_solo || item.niños.length === 0">
+                                        <span class="badge border bg-light text-primary rounded-pill shadow-sm" style="font-weight: 600;">
+                                            <i class="bi bi-person-fill me-1"></i>Adulto Individual
+                                        </span>
+                                    </template>
                                 </div>
                             </td>
                             <td>
@@ -169,6 +174,16 @@
             <div class="bg-light rounded-3 p-4 mb-4 border">
                 <h6 class="font-title fw-bold text-muted mb-3"><i class="bi bi-people-fill me-2"></i>PARTICIPANTES HABILITADOS</h6>
                 <div class="d-grid gap-2">
+                    <template x-if="validData.es_adulto_solo || (validData.niños && validData.niños.length === 0)">
+                        <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm border-start border-4 border-primary">
+                            <i class="bi bi-person-badge-fill text-primary fs-3 me-3"></i>
+                            <div class="flex-grow-1">
+                                <span class="fw-bold d-block text-dark" style="font-size: 1.1rem;" x-text="validData.representante"></span>
+                                <small class="text-muted">Participante Adulto Individual (Sin menores)</small>
+                            </div>
+                            <span class="badge border bg-light text-primary px-3 py-2 rounded-pill fw-bold">ADULTO SOLO</span>
+                        </div>
+                    </template>
                     <template x-for="niño in validData.niños">
                         <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm border-start border-4" style="border-color: var(--badge-success-text) !important;">
                             <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>

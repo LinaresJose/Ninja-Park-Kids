@@ -28,9 +28,10 @@ class RegistroService
         Representante $representante,
         array $participantesIds,
         array $nuevosNiños,
-        string $firmaBase64
+        string $firmaBase64,
+        bool $esAdultoSolo = false
     ): AcuerdoFirmado {
-        return DB::transaction(function () use ($representante, $participantesIds, $nuevosNiños, $firmaBase64) {
+        return DB::transaction(function () use ($representante, $participantesIds, $nuevosNiños, $firmaBase64, $esAdultoSolo) {
 
             // Evitar duplicar el acuerdo si ya se procesó uno hoy (por doble click o envío simultáneo)
             $acuerdoExistente = AcuerdoFirmado::where('representante_id', $representante->id)
@@ -41,24 +42,26 @@ class RegistroService
                 return $acuerdoExistente;
             }
 
-            // 1. Crear niños nuevos si los hay (reusando existentes si coinciden exactamente para evitar duplicados en la BD) y recopilar sus IDs
-            foreach ($nuevosNiños as $niño) {
-                $existente = Participante::where('representante_id', $representante->id)
-                    ->where('nombre', $niño['nombre'])
-                    ->where('apellido', $niño['apellido'])
-                    ->where('fecha_nacimiento', $niño['fecha_nacimiento'])
-                    ->first();
+            // 1. Crear niños nuevos si los hay (solo si no es adulto solo)
+            if (!$esAdultoSolo) {
+                foreach ($nuevosNiños as $niño) {
+                    $existente = Participante::where('representante_id', $representante->id)
+                        ->where('nombre', $niño['nombre'])
+                        ->where('apellido', $niño['apellido'])
+                        ->where('fecha_nacimiento', $niño['fecha_nacimiento'])
+                        ->first();
 
-                if ($existente) {
-                    $participantesIds[] = $existente->id;
-                } else {
-                    $creado = Participante::create([
-                        'representante_id' => $representante->id,
-                        'nombre'           => $niño['nombre'],
-                        'apellido'         => $niño['apellido'],
-                        'fecha_nacimiento' => $niño['fecha_nacimiento'],
-                    ]);
-                    $participantesIds[] = $creado->id;
+                    if ($existente) {
+                        $participantesIds[] = $existente->id;
+                    } else {
+                        $creado = Participante::create([
+                            'representante_id' => $representante->id,
+                            'nombre'           => $niño['nombre'],
+                            'apellido'         => $niño['apellido'],
+                            'fecha_nacimiento' => $niño['fecha_nacimiento'],
+                        ]);
+                        $participantesIds[] = $creado->id;
+                    }
                 }
             }
 
@@ -100,10 +103,11 @@ class RegistroService
                 'fecha_firma'      => now(),
                 'token_qr'         => (string) Str::uuid(),
                 'firma_base64'     => $firmaGuardada,
+                'es_adulto_solo'   => $esAdultoSolo,
             ]);
 
             // 5. Vincular los participantes a este acuerdo (eliminando duplicados del array de IDs)
-            $acuerdo->participantes()->sync(array_unique($participantesIds));
+            $acuerdo->participantes()->sync($esAdultoSolo ? [] : array_unique($participantesIds));
 
             return $acuerdo;
         });

@@ -19,20 +19,31 @@ class StoreRegistroRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $tipoIngreso = $this->input('tipo_ingreso', 'con_ninos');
+        $esAdultoSolo = ($tipoIngreso === 'solo_adulto');
+
+        $rules = [
+            'tipo_ingreso'               => 'nullable|in:con_ninos,solo_adulto',
             'cedula'                     => 'required|numeric|digits_between:7,8',
             'nombre'                     => 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
             'apellido'                   => 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
-            'parentesco'                 => 'required|in:Padre,Madre,Representante Legal',
             'correo'                     => 'required|email|max:100',
             'telefono'                   => 'required|numeric|digits:11',
             'fecha_nacimiento'           => 'required|date|before_or_equal:' . date('Y-m-d', strtotime('-18 years')),
-            'nombres_niños'              => 'required|array|min:1|max:15',
-            'nombres_niños.*'            => 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
-            'apellidos_niños.*'          => 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50',
-            'fechas_nacimiento_niños.*'  => 'required|date|before:today',
             'firma_base64'               => 'required|string|max:200000',
         ];
+
+        if ($esAdultoSolo) {
+            $rules['parentesco'] = 'nullable|string|max:50';
+        } else {
+            $rules['parentesco']                 = 'required|in:Padre,Madre,Representante Legal';
+            $rules['nombres_niños']              = 'required|array|min:1|max:15';
+            $rules['nombres_niños.*']            = 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50';
+            $rules['apellidos_niños.*']          = 'required|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/u|min:2|max:50';
+            $rules['fechas_nacimiento_niños.*']  = 'required|date|before:today';
+        }
+
+        return $rules;
     }
 
     /**
@@ -83,6 +94,11 @@ class StoreRegistroRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
+            $tipoIngreso = $this->input('tipo_ingreso', 'con_ninos');
+            if ($tipoIngreso === 'solo_adulto') {
+                return;
+            }
+
             $nombres = $this->input('nombres_niños', []);
             if (!is_array($nombres)) {
                 return;
