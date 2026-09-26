@@ -92,9 +92,22 @@
                 @endif
             </div>
 
+            <!-- AVISO DE RETORNO AUTOMÁTICO (SOLO TABLETS Y PANTALLAS FIJAS) -->
+            <div id="tablet-auto-return" class="p-3 my-4 rounded-3 text-center" style="display: none; background: rgba(123, 44, 191, 0.05); border: 1px solid rgba(123, 44, 191, 0.15);">
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                    <span class="spinner-grow spinner-grow-sm text-primary" role="status" style="width: 12px; height: 12px;"></span>
+                    <span class="text-muted fw-semibold" style="font-size: 0.95rem;">
+                        La tablet volverá al inicio para el siguiente turno en <strong id="contador-segundos" class="text-primary fs-5 fw-black">30</strong> segundos.
+                    </span>
+                </div>
+                <div class="progress mx-auto" style="height: 5px; max-width: 320px; background: rgba(0,0,0,0.06);">
+                    <div id="progreso-retorno" class="progress-bar bg-primary" role="progressbar" style="width: 100%; transition: width 1s linear;"></div>
+                </div>
+            </div>
+
             <div class="mt-2">
                 <a href="{{ route('registro.verificar') }}" class="btn-ninja">
-                    <i class="bi bi-house-door-fill me-2"></i> VOLVER AL INICIO
+                    <i class="bi bi-arrow-repeat me-2"></i> VOLVER AL INICIO AHORA
                 </a>
             </div>
             
@@ -105,12 +118,49 @@
 
 @push('scripts')
 <script>
-    // Mostrar botón de descarga SOLO en dispositivos móviles (User-Agent + media query)
     (function() {
-        const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-                         || window.matchMedia('(max-width: 767px)').matches;
-        if (isMobile) {
-            document.getElementById('download-btn-container').style.display = 'block';
+        // Detección precisa de teléfono vs tablet:
+        // Los teléfonos inteligentes tienen una dimensión mínima de pantalla inferior a 600px.
+        // Las tablets (iPad, Galaxy Tab, etc.) y computadoras tienen 600px o más.
+        const minDimension = Math.min(window.screen.width, window.screen.height);
+        const isPhone = minDimension < 600;
+
+        if (isPhone) {
+            // En teléfonos: mostramos botón de descarga y NO activamos temporizador
+            const btnDownload = document.getElementById('download-btn-container');
+            if (btnDownload) {
+                btnDownload.style.display = 'block';
+            }
+        } else {
+            // En tablets y pantallas de recepción: activamos retorno automático de 30 segundos
+            const banner = document.getElementById('tablet-auto-return');
+            const contadorEl = document.getElementById('contador-segundos');
+            const progresoEl = document.getElementById('progreso-retorno');
+
+            if (banner) {
+                banner.style.display = 'block';
+            }
+
+            let segundosRestantes = 30;
+            const totalSegundos = 30;
+
+            const intervalo = setInterval(function() {
+                segundosRestantes--;
+
+                if (contadorEl) {
+                    contadorEl.textContent = segundosRestantes;
+                }
+
+                if (progresoEl) {
+                    const porcentaje = (segundosRestantes / totalSegundos) * 100;
+                    progresoEl.style.width = porcentaje + '%';
+                }
+
+                if (segundosRestantes <= 0) {
+                    clearInterval(intervalo);
+                    window.location.href = "{{ route('registro.verificar') }}";
+                }
+            }, 1000);
         }
     })();
 </script>
